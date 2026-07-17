@@ -1,0 +1,18 @@
+{
+  "extensionName": "Runtime Expression",
+  "blocks": [
+    {
+      "opcode": "runtimeCondition",
+      "blockType": "BOOLEAN",
+      "text": "condition [EXPRESSION]",
+      "description": "Safely evaluates a JavaScript-like condition using Temporary Variables runtime variables.",
+      "featureFlag": "runtimeExpression",
+      "arguments": {
+        "EXPRESSION": {
+          "type": "STRING",
+          "defaultValue": "state == \"ready\""
+        }
+      }
+    }
+  ]
+}
