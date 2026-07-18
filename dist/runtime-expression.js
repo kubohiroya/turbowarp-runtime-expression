@@ -17,8 +17,8 @@
     blocks
   };
   const FEATURE_FLAGS = {
-    conditionalBroadcast: false,
-    runtimeExpression: false
+    conditionalBroadcast: true,
+    runtimeExpression: true
   };
   const MAX_EXPRESSION_LENGTH = 4096;
   const MAX_TOKEN_COUNT = 512;

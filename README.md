@@ -6,7 +6,7 @@ A safe JavaScript-like condition evaluator and conditional broadcast monitor for
 
 Build or download `dist/runtime-expression.js`, then load it as a local custom extension in TurboWarp Desktop with **Run extension without sandbox** enabled. Load TurboWarp's **Temporary Variables** extension before using the condition or conditional broadcast blocks.
 
-The condition reporter and conditional broadcasts are guarded by the compile-time `runtimeExpression` and `conditionalBroadcast` feature flags in `config/feature-flags.ts`. Both flags are OFF by default.
+The condition reporter and conditional broadcasts are guarded by the compile-time `runtimeExpression` and `conditionalBroadcast` feature flags in `config/feature-flags.ts`. Both flags are ON by default.
 
 ## Expression syntax
 
@@ -87,8 +87,8 @@ Unregisters the conditional broadcast with the matching ID.
 ## Development
 
 ```bash
-npm install
-npm run check
+pnpm install
+pnpm run check
 ```
 
 The build produces `dist/runtime-expression.js`. Commit the rebuilt file whenever extension source changes.

@@ -1,4 +1,4 @@
 export const FEATURE_FLAGS = {
-  conditionalBroadcast: false,
-  runtimeExpression: false
+  conditionalBroadcast: true,
+  runtimeExpression: true
 } as const;

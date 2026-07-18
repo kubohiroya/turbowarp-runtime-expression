@@ -54,10 +54,16 @@ describe('Runtime Expression extension', () => {
       .toThrow('Temporary Variables');
   });
 
-  it('keeps the condition block hidden while the feature flag is off', () => {
-    expect(FEATURE_FLAGS.conditionalBroadcast).toBe(false);
-    expect(FEATURE_FLAGS.runtimeExpression).toBe(false);
-    expect(new RuntimeExpressionExtension().getInfo().blocks).toEqual([]);
+  it('enables all blocks by default', () => {
+    expect(FEATURE_FLAGS.conditionalBroadcast).toBe(true);
+    expect(FEATURE_FLAGS.runtimeExpression).toBe(true);
+    expect(
+      new RuntimeExpressionExtension().getInfo().blocks.map((block) => block.opcode)
+    ).toEqual([
+      'runtimeCondition',
+      'registerConditionalBroadcast',
+      'unregisterConditionalBroadcast'
+    ]);
   });
 
   it('registers frame monitoring and clears registrations on project lifecycle events', () => {
