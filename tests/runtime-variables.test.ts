@@ -1,5 +1,6 @@
 import {describe, expect, it, vi} from 'vitest';
 import {
+  getRuntimeVariablesIfAvailable,
   readRuntimeVariable,
   readRuntimeVariableState,
   requireRuntimeVariables
@@ -16,10 +17,16 @@ function createExtension(values = new Map<string, unknown>()): TemporaryVariable
 describe('Temporary Variables adapter', () => {
   it('validates and returns the public extension API', () => {
     const extension = createExtension();
+    expect(getRuntimeVariablesIfAvailable({ext_lmsTempVars2: extension}))
+      .toBe(extension);
     expect(requireRuntimeVariables({ext_lmsTempVars2: extension})).toBe(extension);
   });
 
   it('rejects a missing or incomplete extension API', () => {
+    expect(getRuntimeVariablesIfAvailable({})).toBeUndefined();
+    expect(getRuntimeVariablesIfAvailable({
+      ext_lmsTempVars2: {getRuntimeVariable: vi.fn()}
+    } as unknown as TurboWarpRuntime)).toBeUndefined();
     expect(() => requireRuntimeVariables({})).toThrow('Temporary Variables');
     expect(() => requireRuntimeVariables({
       ext_lmsTempVars2: {getRuntimeVariable: vi.fn()}

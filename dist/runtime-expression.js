@@ -454,14 +454,19 @@
       return Boolean(evaluateConditionExpression(this.parse(expression), resolveVariable));
     }
   }
-  function requireRuntimeVariables(runtime) {
+  function getRuntimeVariablesIfAvailable(runtime) {
     const extension = runtime.ext_lmsTempVars2;
     if (!extension || typeof extension.setRuntimeVariable !== "function" || typeof extension.getRuntimeVariable !== "function" || typeof extension.runtimeVariableExists !== "function") {
-      throw new Error(
-        "Temporary Variables (lmsTempVars2) must be loaded before using Runtime Expression."
-      );
+      return void 0;
     }
     return extension;
+  }
+  function requireRuntimeVariables(runtime) {
+    const extension = getRuntimeVariablesIfAvailable(runtime);
+    if (extension) return extension;
+    throw new Error(
+      "Temporary Variables (lmsTempVars2) must be loaded before using Runtime Expression."
+    );
   }
   function readRuntimeVariableState(extension, name) {
     const exists = extension.runtimeVariableExists({ VAR: name });
@@ -487,7 +492,10 @@
       const runtimeVariables = requireRuntimeVariables(this.runtime);
       const expression = this.evaluator.parse(input.condition);
       const dependencies = collectRuntimeVariableNames(expression);
-      const snapshot = captureSnapshot(runtimeVariables, dependencies);
+      const snapshot = captureSnapshot(
+        dependencies,
+        (name) => readRuntimeVariableState(runtimeVariables, name)
+      );
       const result = evaluateSnapshot(expression, snapshot);
       const expiresAt = input.timeoutSeconds > 0 ? this.now() + input.timeoutSeconds * 1e3 : null;
       this.registrations.set(input.id, {
@@ -515,12 +523,11 @@
         }
       }
       if (this.registrations.size === 0) return;
-      const runtimeVariables = requireRuntimeVariables(this.runtime);
+      const runtimeVariables = getRuntimeVariablesIfAvailable(this.runtime);
+      if (!runtimeVariables) return;
+      const readState = createCachedStateReader(runtimeVariables);
       for (const registration of this.registrations.values()) {
-        const snapshot = captureSnapshot(
-          runtimeVariables,
-          registration.dependencies
-        );
+        const snapshot = captureSnapshot(registration.dependencies, readState);
         if (snapshotsEqual(registration.snapshot, snapshot)) continue;
         const result = evaluateSnapshot(registration.expression, snapshot);
         const previousResult = registration.result;
@@ -534,13 +541,20 @@
       }
     }
   }
-  function captureSnapshot(extension, dependencies) {
+  function captureSnapshot(dependencies, readState) {
     return new Map(
-      dependencies.map((name) => [
-        name,
-        readRuntimeVariableState(extension, name)
-      ])
+      dependencies.map((name) => [name, readState(name)])
     );
+  }
+  function createCachedStateReader(extension) {
+    const cache = /* @__PURE__ */ new Map();
+    return (name) => {
+      const cached = cache.get(name);
+      if (cached) return cached;
+      const state = readRuntimeVariableState(extension, name);
+      cache.set(name, state);
+      return state;
+    };
   }
   function evaluateSnapshot(expression, snapshot) {
     return Boolean(evaluateConditionExpression(

@@ -4,7 +4,11 @@ import {ConditionEvaluator} from '../src/condition.js';
 
 interface Harness {
   manager: ConditionalBroadcastManager;
+  runtime: TurboWarpRuntime;
+  runtimeVariables: TemporaryVariablesExtension;
   values: Map<string, unknown>;
+  getRuntimeVariable: ReturnType<typeof vi.fn>;
+  runtimeVariableExists: ReturnType<typeof vi.fn>;
   startHats: ReturnType<typeof vi.fn>;
   setTime(value: number): void;
 }
@@ -13,14 +17,19 @@ function createHarness(
   initialValues: Iterable<readonly [string, unknown]> = []
 ): Harness {
   const values = new Map(initialValues);
+  const getRuntimeVariable =
+    vi.fn(({VAR}: {VAR: string}) => values.get(VAR));
+  const runtimeVariableExists =
+    vi.fn(({VAR}: {VAR: string}) => values.has(VAR));
   const startHats = vi.fn(() => []);
   let now = 0;
+  const runtimeVariables: TemporaryVariablesExtension = {
+    setRuntimeVariable: vi.fn(),
+    getRuntimeVariable,
+    runtimeVariableExists
+  };
   const runtime: TurboWarpRuntime = {
-    ext_lmsTempVars2: {
-      setRuntimeVariable: vi.fn(),
-      getRuntimeVariable: ({VAR}: {VAR: string}) => values.get(VAR),
-      runtimeVariableExists: ({VAR}: {VAR: string}) => values.has(VAR)
-    },
+    ext_lmsTempVars2: runtimeVariables,
     on: vi.fn(),
     startHats
   };
@@ -30,7 +39,11 @@ function createHarness(
       new ConditionEvaluator(),
       () => now
     ),
+    runtime,
+    runtimeVariables,
     values,
+    getRuntimeVariable,
+    runtimeVariableExists,
     startHats,
     setTime: (value) => {
       now = value;
@@ -103,6 +116,47 @@ describe('conditional broadcast manager', () => {
       'event_whenbroadcastreceived',
       {BROADCAST_OPTION: 'not positive'}
     );
+  });
+
+  it('skips frames safely while Temporary Variables is unavailable', () => {
+    const harness = createHarness([['flag', false]]);
+    registerFlag(harness.manager);
+
+    delete harness.runtime.ext_lmsTempVars2;
+    harness.values.set('flag', true);
+    expect(() => harness.manager.processFrame()).not.toThrow();
+    expect(harness.startHats).not.toHaveBeenCalled();
+
+    harness.runtime.ext_lmsTempVars2 = harness.runtimeVariables;
+    harness.manager.processFrame();
+    expect(harness.startHats).toHaveBeenCalledOnce();
+  });
+
+  it('shares runtime variable lookups across registrations in one frame', () => {
+    const harness = createHarness([['state', false]]);
+    harness.manager.register({
+      id: 'first',
+      condition: 'state',
+      messageOnTrue: 'first on',
+      messageOnFalse: 'first off',
+      timeoutSeconds: 0
+    });
+    harness.manager.register({
+      id: 'second',
+      condition: 'state === true',
+      messageOnTrue: 'second on',
+      messageOnFalse: 'second off',
+      timeoutSeconds: 0
+    });
+    harness.getRuntimeVariable.mockClear();
+    harness.runtimeVariableExists.mockClear();
+
+    harness.values.set('state', true);
+    harness.manager.processFrame();
+
+    expect(harness.runtimeVariableExists).toHaveBeenCalledOnce();
+    expect(harness.getRuntimeVariable).toHaveBeenCalledOnce();
+    expect(harness.startHats).toHaveBeenCalledTimes(2);
   });
 
   it('detects creation and deletion of a runtime variable', () => {

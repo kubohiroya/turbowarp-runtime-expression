@@ -5,6 +5,7 @@ import {
   evaluateConditionExpression
 } from './condition.js';
 import {
+  getRuntimeVariablesIfAvailable,
   readRuntimeVariableState,
   type RuntimeVariableState,
   requireRuntimeVariables
@@ -44,7 +45,10 @@ export class ConditionalBroadcastManager {
     const runtimeVariables = requireRuntimeVariables(this.runtime);
     const expression = this.evaluator.parse(input.condition);
     const dependencies = collectRuntimeVariableNames(expression);
-    const snapshot = captureSnapshot(runtimeVariables, dependencies);
+    const snapshot = captureSnapshot(
+      dependencies,
+      (name) => readRuntimeVariableState(runtimeVariables, name)
+    );
     const result = evaluateSnapshot(expression, snapshot);
     const expiresAt = input.timeoutSeconds > 0
       ? this.now() + input.timeoutSeconds * 1000
@@ -83,12 +87,12 @@ export class ConditionalBroadcastManager {
     }
     if (this.registrations.size === 0) return;
 
-    const runtimeVariables = requireRuntimeVariables(this.runtime);
+    const runtimeVariables = getRuntimeVariablesIfAvailable(this.runtime);
+    if (!runtimeVariables) return;
+    const readState = createCachedStateReader(runtimeVariables);
+
     for (const registration of this.registrations.values()) {
-      const snapshot = captureSnapshot(
-        runtimeVariables,
-        registration.dependencies
-      );
+      const snapshot = captureSnapshot(registration.dependencies, readState);
       if (snapshotsEqual(registration.snapshot, snapshot)) continue;
 
       const result = evaluateSnapshot(registration.expression, snapshot);
@@ -107,16 +111,28 @@ export class ConditionalBroadcastManager {
   }
 }
 
+type RuntimeVariableStateReader = (name: string) => RuntimeVariableState;
+
 function captureSnapshot(
-  extension: TemporaryVariablesExtension,
-  dependencies: readonly string[]
+  dependencies: readonly string[],
+  readState: RuntimeVariableStateReader
 ): RuntimeVariableSnapshot {
   return new Map(
-    dependencies.map((name) => [
-      name,
-      readRuntimeVariableState(extension, name)
-    ])
+    dependencies.map((name) => [name, readState(name)])
   );
+}
+
+function createCachedStateReader(
+  extension: TemporaryVariablesExtension
+): RuntimeVariableStateReader {
+  const cache = new Map<string, RuntimeVariableState>();
+  return (name) => {
+    const cached = cache.get(name);
+    if (cached) return cached;
+    const state = readRuntimeVariableState(extension, name);
+    cache.set(name, state);
+    return state;
+  };
 }
 
 function evaluateSnapshot(
