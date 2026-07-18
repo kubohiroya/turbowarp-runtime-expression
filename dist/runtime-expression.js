@@ -23,6 +23,24 @@
   const MAX_TOKEN_COUNT = 512;
   const MAX_PARSE_DEPTH = 64;
   const MAX_CACHE_ENTRIES = 128;
+  const MULTI_CHAR_OPERATORS = [
+    "===",
+    "!==",
+    "==",
+    "!=",
+    "<=",
+    ">=",
+    "&&",
+    "||"
+  ];
+  const SIMPLE_ESCAPES = {
+    "\\": "\\",
+    '"': '"',
+    "'": "'",
+    n: "\n",
+    r: "\r",
+    t: "	"
+  };
   class ConditionSyntaxError extends Error {
     constructor(message, position) {
       super(`${message} at position ${position}.`);
@@ -56,7 +74,9 @@
         continue;
       }
       const position = index;
-      const operator = ["===", "!==", "==", "!=", "<=", ">=", "&&", "||"].find((candidate) => expression.startsWith(candidate, index));
+      const operator = MULTI_CHAR_OPERATORS.find(
+        (candidate) => expression.startsWith(candidate, index)
+      );
       if (operator) {
         push({ kind: "operator", value: operator, position });
         index += operator.length;
@@ -102,14 +122,6 @@
           if (escaped === void 0) {
             throw new ConditionSyntaxError("Unterminated string escape", escapePosition);
           }
-          const simpleEscapes = {
-            "\\": "\\",
-            '"': '"',
-            "'": "'",
-            n: "\n",
-            r: "\r",
-            t: "	"
-          };
           if (escaped === "u") {
             const hexadecimal = expression.slice(index + 1, index + 5);
             if (!/^[0-9a-fA-F]{4}$/u.test(hexadecimal)) {
@@ -119,7 +131,7 @@
             index += 5;
             continue;
           }
-          const replacement = simpleEscapes[escaped];
+          const replacement = SIMPLE_ESCAPES[escaped];
           if (replacement === void 0) {
             throw new ConditionSyntaxError(`Unsupported string escape \\${escaped}`, escapePosition);
           }
@@ -355,8 +367,8 @@
       case "unary": {
         const value = evaluateConditionExpression(expression.operand, resolveVariable);
         if (expression.operator === "!") return !value;
-        if (expression.operator === "+") return +value;
-        return -value;
+        if (expression.operator === "+") return Number(value);
+        return -Number(value);
       }
       case "binary": {
         const left = evaluateConditionExpression(expression.left, resolveVariable);

@@ -32,6 +32,26 @@ export type ConditionExpression =
 
 export type RuntimeVariableResolver = (name: string) => unknown;
 
+const MULTI_CHAR_OPERATORS = [
+  '===',
+  '!==',
+  '==',
+  '!=',
+  '<=',
+  '>=',
+  '&&',
+  '||'
+] as const;
+
+const SIMPLE_ESCAPES: Record<string, string> = {
+  '\\': '\\',
+  '"': '"',
+  "'": "'",
+  n: '\n',
+  r: '\r',
+  t: '\t'
+};
+
 export class ConditionSyntaxError extends Error {
   constructor(message: string, readonly position: number) {
     super(`${message} at position ${position}.`);
@@ -68,9 +88,9 @@ export function tokenizeCondition(expression: string): ConditionToken[] {
     }
 
     const position = index;
-    const operator = (
-      ['===', '!==', '==', '!=', '<=', '>=', '&&', '||'] as const
-    ).find((candidate) => expression.startsWith(candidate, index));
+    const operator = MULTI_CHAR_OPERATORS.find(
+      (candidate) => expression.startsWith(candidate, index)
+    );
     if (operator) {
       push({kind: 'operator', value: operator, position});
       index += operator.length;
@@ -120,14 +140,6 @@ export function tokenizeCondition(expression: string): ConditionToken[] {
         if (escaped === undefined) {
           throw new ConditionSyntaxError('Unterminated string escape', escapePosition);
         }
-        const simpleEscapes: Record<string, string> = {
-          '\\': '\\',
-          '"': '"',
-          "'": "'",
-          n: '\n',
-          r: '\r',
-          t: '\t'
-        };
         if (escaped === 'u') {
           const hexadecimal = expression.slice(index + 1, index + 5);
           if (!/^[0-9a-fA-F]{4}$/u.test(hexadecimal)) {
@@ -137,7 +149,7 @@ export function tokenizeCondition(expression: string): ConditionToken[] {
           index += 5;
           continue;
         }
-        const replacement = simpleEscapes[escaped];
+        const replacement = SIMPLE_ESCAPES[escaped];
         if (replacement === undefined) {
           throw new ConditionSyntaxError(`Unsupported string escape \\${escaped}`, escapePosition);
         }
@@ -397,8 +409,8 @@ export function evaluateConditionExpression(
     case 'unary': {
       const value = evaluateConditionExpression(expression.operand, resolveVariable);
       if (expression.operator === '!') return !value;
-      if (expression.operator === '+') return +(value as never);
-      return -(value as never);
+      if (expression.operator === '+') return Number(value);
+      return -Number(value);
     }
     case 'binary': {
       const left = evaluateConditionExpression(expression.left, resolveVariable);
@@ -414,15 +426,15 @@ export function evaluateConditionExpression(
         case '!=': return left != right;
         case '===': return left === right;
         case '!==': return left !== right;
-        case '<': return (left as never) < (right as never);
-        case '<=': return (left as never) <= (right as never);
-        case '>': return (left as never) > (right as never);
-        case '>=': return (left as never) >= (right as never);
-        case '+': return (left as never) + (right as never);
-        case '-': return (left as never) - (right as never);
-        case '*': return (left as never) * (right as never);
-        case '/': return (left as never) / (right as never);
-        case '%': return (left as never) % (right as never);
+        case '<': return (left as any) < (right as any);
+        case '<=': return (left as any) <= (right as any);
+        case '>': return (left as any) > (right as any);
+        case '>=': return (left as any) >= (right as any);
+        case '+': return (left as any) + (right as any);
+        case '-': return (left as any) - (right as any);
+        case '*': return (left as any) * (right as any);
+        case '/': return (left as any) / (right as any);
+        case '%': return (left as any) % (right as any);
       }
     }
   }
