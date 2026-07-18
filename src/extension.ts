@@ -1,10 +1,11 @@
 import definitions from './block-definitions.json' with {type: 'json'};
 import {FEATURE_FLAGS} from '../config/feature-flags.js';
+import {ConditionalBroadcastManager} from './conditional-broadcast.js';
 import {ConditionEvaluator} from './condition.js';
 import {readRuntimeVariable, requireRuntimeVariables} from './runtime-variables.js';
 
 export const EXTENSION_ID = 'twRuntimeExpression';
-export const EXTENSION_VERSION = '2026-07-18-runtime-expression-v1';
+export const EXTENSION_VERSION = '2026-07-18-conditional-broadcast-v1';
 
 type BlockArgs = Record<string, unknown>;
 
@@ -27,6 +28,19 @@ const blockDefinitions = definitions.blocks as DefinitionBlock[];
 export class RuntimeExpressionExtension {
   private readonly runtime = Scratch.vm.runtime;
   private readonly evaluator = new ConditionEvaluator();
+  private readonly conditionalBroadcasts =
+    new ConditionalBroadcastManager(this.runtime, this.evaluator);
+
+  constructor() {
+    this.runtime.on(
+      'BEFORE_EXECUTE',
+      () => this.conditionalBroadcasts.processFrame()
+    );
+    const clearConditionalBroadcasts =
+      (): void => this.conditionalBroadcasts.clear();
+    this.runtime.on('PROJECT_START', clearConditionalBroadcasts);
+    this.runtime.on('PROJECT_STOP_ALL', clearConditionalBroadcasts);
+  }
 
   getInfo(): ScratchExtensionInfo {
     return {
@@ -60,5 +74,19 @@ export class RuntimeExpressionExtension {
       String(args.EXPRESSION ?? ''),
       (name) => readRuntimeVariable(runtimeVariables, name)
     );
+  }
+
+  registerConditionalBroadcast(args: BlockArgs): void {
+    this.conditionalBroadcasts.register({
+      id: String(args.ID ?? ''),
+      condition: String(args.CONDITION ?? ''),
+      messageOnTrue: String(args.MESSAGE_ON_TRUE ?? ''),
+      messageOnFalse: String(args.MESSAGE_ON_FALSE ?? ''),
+      timeoutSeconds: Number(args.TIMEOUT ?? 0)
+    });
+  }
+
+  unregisterConditionalBroadcast(args: BlockArgs): void {
+    this.conditionalBroadcasts.unregister(String(args.ID ?? ''));
   }
 }

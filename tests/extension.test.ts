@@ -4,9 +4,17 @@ import {RuntimeExpressionExtension} from '../src/extension.js';
 
 describe('Runtime Expression extension', () => {
   const values = new Map<string, unknown>();
+  const listeners = new Map<string, Array<() => void>>();
+  const startHats = vi.fn(() => []);
+
+  const emit = (event: string): void => {
+    for (const listener of listeners.get(event) ?? []) listener();
+  };
 
   beforeEach(() => {
     values.clear();
+    listeners.clear();
+    startHats.mockClear();
     vi.stubGlobal('Scratch', {
       vm: {
         runtime: {
@@ -14,12 +22,18 @@ describe('Runtime Expression extension', () => {
             setRuntimeVariable: vi.fn(),
             getRuntimeVariable: ({VAR}: {VAR: string}) => values.get(VAR) ?? '',
             runtimeVariableExists: ({VAR}: {VAR: string}) => values.has(VAR)
-          }
+          },
+          on: (event: string, listener: () => void) => {
+            const eventListeners = listeners.get(event) ?? [];
+            eventListeners.push(listener);
+            listeners.set(event, eventListeners);
+          },
+          startHats
         }
       },
       extensions: {unsandboxed: true, register: vi.fn()},
       BlockType: {COMMAND: 'command', BOOLEAN: 'boolean', REPORTER: 'reporter'},
-      ArgumentType: {STRING: 'string'},
+      ArgumentType: {NUMBER: 'number', STRING: 'string'},
       translate: (text: string) => text
     });
   });
@@ -41,7 +55,45 @@ describe('Runtime Expression extension', () => {
   });
 
   it('keeps the condition block hidden while the feature flag is off', () => {
+    expect(FEATURE_FLAGS.conditionalBroadcast).toBe(false);
     expect(FEATURE_FLAGS.runtimeExpression).toBe(false);
     expect(new RuntimeExpressionExtension().getInfo().blocks).toEqual([]);
+  });
+
+  it('registers frame monitoring and clears registrations on project lifecycle events', () => {
+    values.set('state', 'idle');
+    const extension = new RuntimeExpressionExtension();
+    extension.registerConditionalBroadcast({
+      ID: 'state',
+      CONDITION: 'state == "ready"',
+      MESSAGE_ON_TRUE: 'ready',
+      MESSAGE_ON_FALSE: 'not ready',
+      TIMEOUT: 0
+    });
+
+    expect(startHats).not.toHaveBeenCalled();
+    values.set('state', 'ready');
+    emit('BEFORE_EXECUTE');
+    expect(startHats).toHaveBeenCalledWith(
+      'event_whenbroadcastreceived',
+      {BROADCAST_OPTION: 'ready'}
+    );
+
+    emit('PROJECT_STOP_ALL');
+    values.set('state', 'idle');
+    emit('BEFORE_EXECUTE');
+    expect(startHats).toHaveBeenCalledTimes(1);
+
+    extension.registerConditionalBroadcast({
+      ID: 'state',
+      CONDITION: 'state == "ready"',
+      MESSAGE_ON_TRUE: 'ready',
+      MESSAGE_ON_FALSE: 'not ready',
+      TIMEOUT: 0
+    });
+    emit('PROJECT_START');
+    values.set('state', 'ready');
+    emit('BEFORE_EXECUTE');
+    expect(startHats).toHaveBeenCalledTimes(1);
   });
 });

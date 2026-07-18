@@ -1,5 +1,5 @@
 export function requireRuntimeVariables(
-  runtime: TurboWarpRuntime
+  runtime: Pick<TurboWarpRuntime, 'ext_lmsTempVars2'>
 ): TemporaryVariablesExtension {
   const extension = runtime.ext_lmsTempVars2;
   if (
@@ -15,11 +15,25 @@ export function requireRuntimeVariables(
   return extension;
 }
 
+export interface RuntimeVariableState {
+  exists: boolean;
+  value: unknown;
+}
+
+export function readRuntimeVariableState(
+  extension: TemporaryVariablesExtension,
+  name: string
+): RuntimeVariableState {
+  const exists = extension.runtimeVariableExists({VAR: name});
+  return {
+    exists,
+    value: exists ? extension.getRuntimeVariable({VAR: name}) : undefined
+  };
+}
+
 export function readRuntimeVariable(
   extension: TemporaryVariablesExtension,
   name: string
 ): unknown {
-  return extension.runtimeVariableExists({VAR: name})
-    ? extension.getRuntimeVariable({VAR: name})
-    : undefined;
+  return readRuntimeVariableState(extension, name).value;
 }

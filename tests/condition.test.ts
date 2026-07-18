@@ -1,5 +1,6 @@
 import {describe, expect, it, vi} from 'vitest';
 import {
+  collectRuntimeVariableNames,
   ConditionEvaluator,
   ConditionSyntaxError,
   MAX_CACHE_ENTRIES,
@@ -57,6 +58,14 @@ describe('safe runtime condition evaluator', () => {
     expect(evaluator.evaluate('vars["日本語 変数"] == "値"', resolve)).toBe(true);
     expect(evaluator.evaluate('missing === undefined', resolve)).toBe(true);
     expect(evaluator.evaluate('vars["true"] === "runtime true"', resolve)).toBe(true);
+  });
+
+  it('collects unique runtime variable dependencies in source order', () => {
+    const expression = parseCondition(
+      'state == "ready" && vars["日本語 変数"] > score || state'
+    );
+    expect(collectRuntimeVariableNames(expression))
+      .toEqual(['state', '日本語 変数', 'score']);
   });
 
   it('supports documented string escapes', () => {

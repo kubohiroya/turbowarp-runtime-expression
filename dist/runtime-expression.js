@@ -11,18 +11,39 @@
   var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
   var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   const extensionName = "Runtime Expression";
-  const blocks = [{ "opcode": "runtimeCondition", "blockType": "BOOLEAN", "text": "condition [EXPRESSION]", "description": "Safely evaluates a JavaScript-like condition using Temporary Variables runtime variables.", "featureFlag": "runtimeExpression", "arguments": { "EXPRESSION": { "type": "STRING", "defaultValue": 'state == "ready"' } } }];
+  const blocks = [{ "opcode": "runtimeCondition", "blockType": "BOOLEAN", "text": "condition [EXPRESSION]", "description": "Safely evaluates a JavaScript-like condition using Temporary Variables runtime variables.", "featureFlag": "runtimeExpression", "arguments": { "EXPRESSION": { "type": "STRING", "defaultValue": 'state == "ready"' } } }, { "opcode": "registerConditionalBroadcast", "blockType": "COMMAND", "text": "register [ID] conditional broadcast [CONDITION] [MESSAGE_ON_TRUE] / [MESSAGE_ON_FALSE] with [TIMEOUT] seconds timeout", "description": "Registers broadcasts for false-to-true and true-to-false runtime condition changes.", "featureFlag": "conditionalBroadcast", "arguments": { "ID": { "type": "STRING", "defaultValue": "watcher" }, "CONDITION": { "type": "STRING", "defaultValue": 'state == "ready"' }, "MESSAGE_ON_TRUE": { "type": "STRING", "defaultValue": "state ready" }, "MESSAGE_ON_FALSE": { "type": "STRING", "defaultValue": "state not ready" }, "TIMEOUT": { "type": "NUMBER", "defaultValue": 0 } } }, { "opcode": "unregisterConditionalBroadcast", "blockType": "COMMAND", "text": "unregister [ID] conditional broadcast", "description": "Unregisters the conditional broadcast with the matching ID.", "featureFlag": "conditionalBroadcast", "arguments": { "ID": { "type": "STRING", "defaultValue": "watcher" } } }];
   const definitions = {
     extensionName,
     blocks
   };
   const FEATURE_FLAGS = {
+    conditionalBroadcast: false,
     runtimeExpression: false
   };
   const MAX_EXPRESSION_LENGTH = 4096;
   const MAX_TOKEN_COUNT = 512;
   const MAX_PARSE_DEPTH = 64;
   const MAX_CACHE_ENTRIES = 128;
+  function collectRuntimeVariableNames(expression) {
+    const names = /* @__PURE__ */ new Set();
+    const visit = (node) => {
+      switch (node.kind) {
+        case "literal":
+          return;
+        case "variable":
+          names.add(node.name);
+          return;
+        case "unary":
+          visit(node.operand);
+          return;
+        case "binary":
+          visit(node.left);
+          visit(node.right);
+      }
+    };
+    visit(expression);
+    return [...names];
+  }
   const MULTI_CHAR_OPERATORS = [
     "===",
     "!==",
@@ -442,8 +463,100 @@
     }
     return extension;
   }
+  function readRuntimeVariableState(extension, name) {
+    const exists = extension.runtimeVariableExists({ VAR: name });
+    return {
+      exists,
+      value: exists ? extension.getRuntimeVariable({ VAR: name }) : void 0
+    };
+  }
   function readRuntimeVariable(extension, name) {
-    return extension.runtimeVariableExists({ VAR: name }) ? extension.getRuntimeVariable({ VAR: name }) : void 0;
+    return readRuntimeVariableState(extension, name).value;
+  }
+  class ConditionalBroadcastManager {
+    constructor(runtime, evaluator = new ConditionEvaluator(), now = () => performance.now()) {
+      __publicField(this, "runtime");
+      __publicField(this, "evaluator");
+      __publicField(this, "now");
+      __publicField(this, "registrations", /* @__PURE__ */ new Map());
+      this.runtime = runtime;
+      this.evaluator = evaluator;
+      this.now = now;
+    }
+    register(input) {
+      const runtimeVariables = requireRuntimeVariables(this.runtime);
+      const expression = this.evaluator.parse(input.condition);
+      const dependencies = collectRuntimeVariableNames(expression);
+      const snapshot = captureSnapshot(runtimeVariables, dependencies);
+      const result = evaluateSnapshot(expression, snapshot);
+      const expiresAt = input.timeoutSeconds > 0 ? this.now() + input.timeoutSeconds * 1e3 : null;
+      this.registrations.set(input.id, {
+        expression,
+        dependencies,
+        snapshot,
+        result,
+        messageOnTrue: input.messageOnTrue,
+        messageOnFalse: input.messageOnFalse,
+        expiresAt
+      });
+    }
+    unregister(id) {
+      this.registrations.delete(id);
+    }
+    clear() {
+      this.registrations.clear();
+    }
+    processFrame() {
+      if (this.registrations.size === 0) return;
+      const now = this.now();
+      for (const [id, registration] of this.registrations) {
+        if (registration.expiresAt !== null && now >= registration.expiresAt) {
+          this.registrations.delete(id);
+        }
+      }
+      if (this.registrations.size === 0) return;
+      const runtimeVariables = requireRuntimeVariables(this.runtime);
+      for (const registration of this.registrations.values()) {
+        const snapshot = captureSnapshot(
+          runtimeVariables,
+          registration.dependencies
+        );
+        if (snapshotsEqual(registration.snapshot, snapshot)) continue;
+        const result = evaluateSnapshot(registration.expression, snapshot);
+        const previousResult = registration.result;
+        registration.snapshot = snapshot;
+        registration.result = result;
+        if (result === previousResult) continue;
+        const message = result ? registration.messageOnTrue : registration.messageOnFalse;
+        this.runtime.startHats("event_whenbroadcastreceived", {
+          BROADCAST_OPTION: message
+        });
+      }
+    }
+  }
+  function captureSnapshot(extension, dependencies) {
+    return new Map(
+      dependencies.map((name) => [
+        name,
+        readRuntimeVariableState(extension, name)
+      ])
+    );
+  }
+  function evaluateSnapshot(expression, snapshot) {
+    return Boolean(evaluateConditionExpression(
+      expression,
+      (name) => snapshot.get(name)?.value
+    ));
+  }
+  function snapshotsEqual(left, right) {
+    if (left.size !== right.size) return false;
+    for (const [name, leftState] of left) {
+      const rightState = right.get(name);
+      if (!rightState || leftState.exists !== rightState.exists || !Object.is(leftState.value, rightState.value)) {
+        return false;
+      }
+    }
+    return true;
   }
   const EXTENSION_ID = "twRuntimeExpression";
   const blockDefinitions = definitions.blocks;
@@ -451,6 +564,14 @@
     constructor() {
       __publicField(this, "runtime", Scratch.vm.runtime);
       __publicField(this, "evaluator", new ConditionEvaluator());
+      __publicField(this, "conditionalBroadcasts", new ConditionalBroadcastManager(this.runtime, this.evaluator));
+      this.runtime.on(
+        "BEFORE_EXECUTE",
+        () => this.conditionalBroadcasts.processFrame()
+      );
+      const clearConditionalBroadcasts = () => this.conditionalBroadcasts.clear();
+      this.runtime.on("PROJECT_START", clearConditionalBroadcasts);
+      this.runtime.on("PROJECT_STOP_ALL", clearConditionalBroadcasts);
     }
     getInfo() {
       return {
@@ -481,6 +602,18 @@
         String(args.EXPRESSION ?? ""),
         (name) => readRuntimeVariable(runtimeVariables, name)
       );
+    }
+    registerConditionalBroadcast(args) {
+      this.conditionalBroadcasts.register({
+        id: String(args.ID ?? ""),
+        condition: String(args.CONDITION ?? ""),
+        messageOnTrue: String(args.MESSAGE_ON_TRUE ?? ""),
+        messageOnFalse: String(args.MESSAGE_ON_FALSE ?? ""),
+        timeoutSeconds: Number(args.TIMEOUT ?? 0)
+      });
+    }
+    unregisterConditionalBroadcast(args) {
+      this.conditionalBroadcasts.unregister(String(args.ID ?? ""));
     }
   }
   if (!Scratch.extensions.unsandboxed) {
