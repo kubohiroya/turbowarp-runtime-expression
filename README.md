@@ -87,8 +87,8 @@ Unregisters the conditional broadcast with the matching ID.
 ## Development
 
 ```bash
-pnpm install
-pnpm run check
+npm install
+npm run check
 ```
 
 The build produces `dist/runtime-expression.js`. Commit the rebuilt file whenever extension source changes.
