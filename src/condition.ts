@@ -30,6 +30,31 @@ export type ConditionExpression =
       right: ConditionExpression;
     };
 
+export function collectRuntimeVariableNames(
+  expression: ConditionExpression
+): string[] {
+  const names = new Set<string>();
+
+  const visit = (node: ConditionExpression): void => {
+    switch (node.kind) {
+      case 'literal':
+        return;
+      case 'variable':
+        names.add(node.name);
+        return;
+      case 'unary':
+        visit(node.operand);
+        return;
+      case 'binary':
+        visit(node.left);
+        visit(node.right);
+    }
+  };
+
+  visit(expression);
+  return [...names];
+}
+
 export type RuntimeVariableResolver = (name: string) => unknown;
 
 const MULTI_CHAR_OPERATORS = [

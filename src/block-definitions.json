@@ -13,6 +13,48 @@
           "defaultValue": "state == \"ready\""
         }
       }
+    },
+    {
+      "opcode": "registerConditionalBroadcast",
+      "blockType": "COMMAND",
+      "text": "register [ID] conditional broadcast [CONDITION] [MESSAGE_ON_TRUE] / [MESSAGE_ON_FALSE] with [TIMEOUT] seconds timeout",
+      "description": "Registers broadcasts for false-to-true and true-to-false runtime condition changes.",
+      "featureFlag": "conditionalBroadcast",
+      "arguments": {
+        "ID": {
+          "type": "STRING",
+          "defaultValue": "watcher"
+        },
+        "CONDITION": {
+          "type": "STRING",
+          "defaultValue": "state == \"ready\""
+        },
+        "MESSAGE_ON_TRUE": {
+          "type": "STRING",
+          "defaultValue": "state ready"
+        },
+        "MESSAGE_ON_FALSE": {
+          "type": "STRING",
+          "defaultValue": "state not ready"
+        },
+        "TIMEOUT": {
+          "type": "NUMBER",
+          "defaultValue": 0
+        }
+      }
+    },
+    {
+      "opcode": "unregisterConditionalBroadcast",
+      "blockType": "COMMAND",
+      "text": "unregister [ID] conditional broadcast",
+      "description": "Unregisters the conditional broadcast with the matching ID.",
+      "featureFlag": "conditionalBroadcast",
+      "arguments": {
+        "ID": {
+          "type": "STRING",
+          "defaultValue": "watcher"
+        }
+      }
     }
   ]
 }

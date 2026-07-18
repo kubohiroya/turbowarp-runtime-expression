@@ -6,6 +6,11 @@ interface TemporaryVariablesExtension {
 
 interface TurboWarpRuntime {
   ext_lmsTempVars2?: TemporaryVariablesExtension;
+  on(event: string, listener: () => void): void;
+  startHats(
+    opcode: string,
+    matchFields?: Record<string, string>
+  ): unknown[] | undefined;
 }
 
 interface ScratchBlockDefinition {
@@ -40,6 +45,7 @@ declare const Scratch: {
     REPORTER: string;
   };
   ArgumentType: {
+    NUMBER: string;
     STRING: string;
   };
   translate: ScratchTranslate;
