@@ -4,7 +4,7 @@ import {ConditionalBroadcastManager} from './conditional-broadcast.js';
 import {ConditionEvaluator} from './condition.js';
 import {readRuntimeVariable, requireRuntimeVariables} from './runtime-variables.js';
 
-export const EXTENSION_ID = 'twRuntimeExpression';
+export const EXTENSION_ID = 'kubohiroyaruntimeexpression';
 export const EXTENSION_VERSION = '2026-07-18-conditional-broadcast-v1';
 
 type BlockArgs = Record<string, unknown>;
