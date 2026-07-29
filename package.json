@@ -1,8 +1,29 @@
 {
   "name": "@kubohiroya/turbowarp-runtime-expression",
   "version": "0.1.0",
+  "description": "A safe condition evaluator and conditional broadcast monitor for TurboWarp runtime variables.",
   "author": "Hiroya Kubo <hiroya@cuc.ac.jp>",
   "type": "module",
+  "license": "MPL-2.0",
+  "homepage": "https://github.com/kubohiroya/turbowarp-runtime-expression#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kubohiroya/turbowarp-runtime-expression.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kubohiroya/turbowarp-runtime-expression/issues"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "unpkg": "./dist/runtime-expression.js",
+  "jsdelivr": "./dist/runtime-expression.js",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "dev": "vite build --watch",
     "typecheck": "tsc --noEmit",
@@ -11,12 +32,22 @@
     "docs": "node scripts/generate-readme.mjs",
     "docs:check": "npm run docs && git diff --exit-code -- README.md",
     "check:dist": "npm run build && git diff --exit-code -- dist",
-    "check": "npm run typecheck && npm run test && npm run build && npm run docs:check && npm run check:dist"
+    "pack:check": "npm pack --dry-run --ignore-scripts",
+    "release:check": "npm publish --dry-run --access public",
+    "check": "npm run typecheck && npm run test && npm run build && npm run docs:check && npm run check:dist && npm run pack:check",
+    "prepack": "npm run check"
   },
   "devDependencies": {
     "@kubohiroya/vite-plugin-turbowarp-extension": "0.1.0",
     "typescript": "^5.9.3",
     "vite": "^7.3.6",
     "vitest": "^4.1.10"
-  }
+  },
+  "keywords": [
+    "turbowarp",
+    "scratch",
+    "extension",
+    "expression",
+    "runtime-variables"
+  ]
 }
