@@ -8,6 +8,12 @@ Build or download `dist/runtime-expression.js`, then load it as a local custom e
 
 The condition reporter and conditional broadcasts are guarded by the compile-time `runtimeExpression` and `conditionalBroadcast` feature flags in `config/feature-flags.ts`. Both flags are ON by default.
 
+## Extension ID compatibility
+
+This migration release uses the standards-compliant ID `kubohiroyaruntimeexpression`. Existing
+projects that store `twRuntimeExpression` opcodes must apply a schema-aware project migration at
+the same time; replacing the JavaScript artifact alone would break their existing blocks.
+
 ## Expression syntax
 
 A bare identifier reads the runtime variable with the same name:

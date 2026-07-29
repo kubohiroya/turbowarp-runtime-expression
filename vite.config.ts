@@ -4,7 +4,7 @@ import {turboWarpExtension} from '@kubohiroya/vite-plugin-turbowarp-extension';
 export default defineConfig({
   plugins: [
     turboWarpExtension({
-      id: 'twRuntimeExpression',
+      id: 'kubohiroyaruntimeexpression',
       name: 'Runtime Expression',
       description: 'Safely evaluate JavaScript-like conditions over Temporary Variables runtime variables.',
       author: 'Hiroya Kubo',
