@@ -6,6 +6,9 @@ describe('Runtime Expression extension', () => {
   const values = new Map<string, unknown>();
   const listeners = new Map<string, Array<() => void>>();
   const startHats = vi.fn(() => []);
+  const getRuntimeVariable = vi.fn(
+    ({VAR}: {VAR: string}) => values.get(VAR) ?? ''
+  );
 
   const emit = (event: string): void => {
     for (const listener of listeners.get(event) ?? []) listener();
@@ -15,12 +18,13 @@ describe('Runtime Expression extension', () => {
     values.clear();
     listeners.clear();
     startHats.mockClear();
+    getRuntimeVariable.mockClear();
     vi.stubGlobal('Scratch', {
       vm: {
         runtime: {
           ext_lmsTempVars2: {
             setRuntimeVariable: vi.fn(),
-            getRuntimeVariable: ({VAR}: {VAR: string}) => values.get(VAR) ?? '',
+            getRuntimeVariable,
             runtimeVariableExists: ({VAR}: {VAR: string}) => values.has(VAR)
           },
           on: (event: string, listener: () => void) => {
@@ -54,16 +58,35 @@ describe('Runtime Expression extension', () => {
       .toThrow('Temporary Variables');
   });
 
+  it('validates syntax without reading or evaluating runtime variables', () => {
+    const extension = new RuntimeExpressionExtension();
+    expect(JSON.parse(extension.validateConditionSyntax({
+      EXPRESSION: 'missingVariable === undefined'
+    }))).toEqual({ok: true});
+    expect(JSON.parse(extension.validateConditionSyntax({
+      EXPRESSION: 'a && )'
+    }))).toMatchObject({
+      ok: false,
+      code: 'CONDITION_SYNTAX_ERROR',
+      position: 5
+    });
+    expect(getRuntimeVariable).not.toHaveBeenCalled();
+  });
+
   it('enables all blocks by default', () => {
     expect(FEATURE_FLAGS.conditionalBroadcast).toBe(true);
     expect(FEATURE_FLAGS.runtimeExpression).toBe(true);
     expect(
       new RuntimeExpressionExtension().getInfo().blocks.map((block) => block.opcode)
     ).toEqual([
+      'validateConditionSyntax',
       'runtimeCondition',
       'registerConditionalBroadcast',
       'unregisterConditionalBroadcast'
     ]);
+    expect(
+      new RuntimeExpressionExtension().getInfo().blocks[0]
+    ).toMatchObject({hideFromPalette: true});
   });
 
   it('registers frame monitoring and clears registrations on project lifecycle events', () => {

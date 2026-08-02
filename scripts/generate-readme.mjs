@@ -8,7 +8,10 @@ const definitions = JSON.parse(
 );
 const readmeUrl = new URL('../README.md', import.meta.url);
 const readme = await readFile(readmeUrl, 'utf8');
-const generated = definitions.blocks.map(renderBlock).join('\n\n');
+const generated = definitions.blocks
+  .filter((block) => !block.hideFromPalette)
+  .map(renderBlock)
+  .join('\n\n');
 const replacement = `${START}\n\n${generated}\n\n${END}`;
 
 if (!readme.includes(START) || !readme.includes(END)) {

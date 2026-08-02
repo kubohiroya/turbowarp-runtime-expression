@@ -7,7 +7,8 @@ import {
   MAX_EXPRESSION_LENGTH,
   MAX_PARSE_DEPTH,
   parseCondition,
-  tokenizeCondition
+  tokenizeCondition,
+  validateConditionSyntax
 } from '../src/condition.js';
 
 function resolver(values: Record<string, unknown>) {
@@ -94,6 +95,16 @@ describe('safe runtime condition evaluator', () => {
     expect(() => parseCondition('a && )')).toThrow('position 5');
     expect(() => parseCondition('"unterminated')).toThrow('position 0');
     expect(() => parseCondition('')).toThrow('Expression is empty at position 0');
+  });
+
+  it('returns a syntax-only validation result without evaluating the expression', () => {
+    expect(validateConditionSyntax('missingVariable === undefined')).toEqual({ok: true});
+    expect(validateConditionSyntax('a && )')).toEqual({
+      ok: false,
+      code: 'CONDITION_SYNTAX_ERROR',
+      position: 5,
+      message: 'Expected a literal, variable, or parenthesized expression at position 5.'
+    });
   });
 
   it('enforces expression, token, nesting, and cache limits', () => {

@@ -84,6 +84,15 @@ export class ConditionSyntaxError extends Error {
   }
 }
 
+export type ConditionSyntaxValidation =
+  | {ok: true}
+  | {
+      ok: false;
+      code: 'CONDITION_SYNTAX_ERROR';
+      position: number;
+      message: string;
+    };
+
 export function tokenizeCondition(expression: string): ConditionToken[] {
   if (expression.length > MAX_EXPRESSION_LENGTH) {
     throw new ConditionSyntaxError(
@@ -420,6 +429,23 @@ class ConditionParser {
 
 export function parseCondition(expression: string): ConditionExpression {
   return new ConditionParser(tokenizeCondition(expression)).parse();
+}
+
+export function validateConditionSyntax(
+  expression: string
+): ConditionSyntaxValidation {
+  try {
+    parseCondition(expression);
+    return {ok: true};
+  } catch (error) {
+    if (!(error instanceof ConditionSyntaxError)) throw error;
+    return {
+      ok: false,
+      code: 'CONDITION_SYNTAX_ERROR',
+      position: error.position,
+      message: error.message
+    };
+  }
 }
 
 export function evaluateConditionExpression(

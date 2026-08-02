@@ -2,6 +2,19 @@
   "extensionName": "Runtime Expression",
   "blocks": [
     {
+      "opcode": "validateConditionSyntax",
+      "blockType": "REPORTER",
+      "text": "validate condition syntax [EXPRESSION]",
+      "description": "Returns a JSON syntax-validation result without reading runtime variables or evaluating the expression.",
+      "hideFromPalette": true,
+      "arguments": {
+        "EXPRESSION": {
+          "type": "STRING",
+          "defaultValue": "state == \"ready\""
+        }
+      }
+    },
+    {
       "opcode": "runtimeCondition",
       "blockType": "BOOLEAN",
       "text": "condition [EXPRESSION]",
