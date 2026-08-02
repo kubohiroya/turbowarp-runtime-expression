@@ -1,11 +1,14 @@
 import definitions from './block-definitions.json' with {type: 'json'};
 import {FEATURE_FLAGS} from '../config/feature-flags.js';
 import {ConditionalBroadcastManager} from './conditional-broadcast.js';
-import {ConditionEvaluator} from './condition.js';
+import {
+  ConditionEvaluator,
+  validateConditionSyntax as validateConditionSyntaxResult
+} from './condition.js';
 import {readRuntimeVariable, requireRuntimeVariables} from './runtime-variables.js';
 
 export const EXTENSION_ID = 'kubohiroyaruntimeexpression';
-export const EXTENSION_VERSION = '2026-07-18-conditional-broadcast-v1';
+export const EXTENSION_VERSION = '2026-08-03-condition-syntax-v1';
 
 type BlockArgs = Record<string, unknown>;
 
@@ -20,6 +23,7 @@ interface DefinitionBlock {
   text: string;
   description: string;
   featureFlag?: keyof typeof FEATURE_FLAGS;
+  hideFromPalette?: boolean;
   arguments: Record<string, DefinitionArgument>;
 }
 
@@ -55,6 +59,7 @@ export class RuntimeExpressionExtension {
           opcode: block.opcode,
           blockType: Scratch.BlockType[block.blockType],
           text: Scratch.translate(block.text),
+          ...(block.hideFromPalette ? {hideFromPalette: true} : {}),
           arguments: Object.fromEntries(
             Object.entries(block.arguments).map(([name, argument]) => [
               name,
@@ -73,6 +78,12 @@ export class RuntimeExpressionExtension {
     return this.evaluator.evaluate(
       String(args.EXPRESSION ?? ''),
       (name) => readRuntimeVariable(runtimeVariables, name)
+    );
+  }
+
+  validateConditionSyntax(args: BlockArgs): string {
+    return JSON.stringify(
+      validateConditionSyntaxResult(String(args.EXPRESSION ?? ''))
     );
   }
 
