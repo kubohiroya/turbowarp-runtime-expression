@@ -1,67 +1,125 @@
 # TurboWarp Runtime Expression
 
-A safe JavaScript-like condition evaluator and conditional broadcast monitor for TurboWarp Temporary Variables runtime variables.
+Turn [Temporary Variables](https://extensions.turbowarp.org/) into safe Boolean conditions, then broadcast only when a condition changes between `false` and `true`.
 
-**User guide:** [English (default)](https://kubohiroya.github.io/turbowarp-runtime-expression/) · [日本語](https://kubohiroya.github.io/turbowarp-runtime-expression/ja/)
+**Full user guide:** [English](https://kubohiroya.github.io/turbowarp-runtime-expression/) · [日本語](https://kubohiroya.github.io/turbowarp-runtime-expression/ja/)
 
-## Installation
+## What it does
 
-Build or download `dist/runtime-expression.js`, then load it as a local custom extension in TurboWarp Desktop with **Run extension without sandbox** enabled. Load TurboWarp's **Temporary Variables** extension before using the condition or conditional broadcast blocks.
+Runtime Expression adds two ways to use runtime state in a TurboWarp project:
 
-The versioned npm package contains the reviewed build:
-
-```bash
-pnpm add --save-exact @kubohiroya/turbowarp-runtime-expression@0.1.0
-```
-
-Load
-`node_modules/@kubohiroya/turbowarp-runtime-expression/dist/runtime-expression.js`, or use
-the version-pinned CDN URL:
+- **Check the current state:** the `condition` reporter evaluates an expression and returns `true` or `false`.
+- **React to a state change:** a conditional broadcast watcher sends one message when a condition becomes true and another when it becomes false.
 
 ```text
-https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.1.0/dist/runtime-expression.js
+Temporary Variables  →  restricted expression parser  →  current result
+                                                        false ⇄ true
+                                                           │
+                                                           └─ broadcast only on a transition
 ```
 
-The condition reporter and conditional broadcasts are guarded by the compile-time `runtimeExpression` and `conditionalBroadcast` feature flags in `config/feature-flags.ts`. Both flags are ON by default.
+The expression language looks like a small part of JavaScript, but it cannot run functions, assignments, or arbitrary property access. The implementation does not use `eval` or `new Function`.
 
-## Extension ID compatibility
+## Before you start
 
-This migration release uses the standards-compliant ID `kubohiroyaruntimeexpression`. Existing
-projects that store `twRuntimeExpression` opcodes must apply a schema-aware project migration at
-the same time; replacing the JavaScript artifact alone would break their existing blocks.
+You need:
 
-## Expression syntax
+1. TurboWarp Desktop or another environment that can load an unsandboxed custom extension.
+2. TurboWarp's **Temporary Variables** extension, loaded before Runtime Expression.
+3. Permission to select **Run extension without sandbox** when loading Runtime Expression.
 
-A bare identifier reads the runtime variable with the same name:
+> [!CAUTION]
+> Unsandboxed extensions can access the TurboWarp VM directly. Load the extension only from a source you trust.
+
+## Quick start
+
+1. Add the **Temporary Variables** extension to your project.
+2. Add the following URL as a custom extension:
+
+   ```text
+   https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.1.0/dist/runtime-expression.js
+   ```
+
+3. Enable **Run extension without sandbox** when TurboWarp asks.
+4. Create a runtime variable named `state` with Temporary Variables and set it to `ready`.
+5. Put this expression in the `condition` block:
+
+   ```js
+   state == "ready"
+   ```
+
+The block now reports `true`. If `state` is missing or contains another value, it reports `false`.
+
+To install the reviewed build from npm instead:
+
+```bash
+npm install --save-exact @kubohiroya/turbowarp-runtime-expression@0.1.0
+```
+
+Then load `node_modules/@kubohiroya/turbowarp-runtime-expression/dist/runtime-expression.js`.
+
+## Check the current state
+
+A bare name reads the runtime variable with the same name:
 
 ```js
-!(state == "paused" && scene == "intro") || score > 10
+state == "ready" && score >= 10
 ```
 
-String literals must be quoted. Runtime variable names that are not ASCII JavaScript identifiers use the restricted `vars["name"]` form:
+String values must be quoted. An unquoted word such as `ready` is treated as another variable name.
+
+For a variable name containing spaces, Japanese, or other non-ASCII characters, use the exact `vars["name"]` form:
 
 ```js
 vars["current state"] === "ready" && vars["得点"] >= 10
 ```
 
-Missing variables evaluate as `undefined`. Supported syntax:
+A missing runtime variable evaluates as `undefined`, so you can check for it explicitly:
 
-- finite numbers, quoted strings, `true`, `false`, `null`, and `undefined`;
-- unary `!`, `+`, and `-`;
-- arithmetic `+`, `-`, `*`, `/`, and `%`;
-- comparison `==`, `!=`, `===`, `!==`, `<`, `<=`, `>`, and `>=`;
-- logical `&&` and `||` with short-circuit evaluation;
-- parentheses and exact `vars["name"]` lookup.
+```js
+nextScene === undefined
+```
 
-Assignments, function calls, general property access, `new`, arrays, objects, optional chaining, and template strings are rejected. The implementation does not use `eval` or `new Function`. Expression length, token count, nesting depth, and the parsed-expression cache are bounded.
+## Broadcast when the result changes
 
-## Conditional broadcasts
+Register a watcher with five values:
 
-A conditional broadcast registration has a unique ID, a condition, messages for true and false transitions, and an optional timeout in seconds. Registration evaluates the condition once without broadcasting. Each VM frame then compares only the runtime variables referenced by the condition and re-evaluates the condition when one of those values or its existence changes.
+| Input | Purpose | Example |
+|---|---|---|
+| `ID` | Stable name used to replace or unregister this watcher | `level-ready` |
+| `CONDITION` | Expression to monitor | `state == "ready"` |
+| `MESSAGE_ON_TRUE` | Broadcast on `false → true` | `state ready` |
+| `MESSAGE_ON_FALSE` | Broadcast on `true → false` | `state not ready` |
+| `TIMEOUT` | Seconds before automatic removal; `0` means no timeout | `0` |
 
-A false-to-true result broadcasts the true message, and a true-to-false result broadcasts the false message. Runtime variable changes that leave the boolean result unchanged do not broadcast. Re-registering an ID replaces it atomically, while unregistering an unknown ID has no effect.
+The watcher evaluates once when registered and remembers that initial result **without broadcasting**. After that:
 
-Positive timeouts remove registrations silently. A timeout of zero or less keeps the registration until it is unregistered or the project starts or stops. Multiple variable updates in one frame are coalesced into the final state observed on the next frame.
+| Result change | Behavior |
+|---|---|
+| `false → true` | Broadcasts `MESSAGE_ON_TRUE` |
+| `true → false` | Broadcasts `MESSAGE_ON_FALSE` |
+| `false → false` or `true → true` | Sends nothing |
+
+Important lifecycle rules:
+
+- Registering the same ID again replaces the previous watcher and its remembered state.
+- A positive timeout removes the watcher silently; zero or less keeps it active.
+- The unregister block removes the watcher with the matching ID. An unknown ID has no effect.
+- Project start and stop clear all watchers, so register them again from your startup scripts.
+- Multiple variable updates within one VM frame are combined; the watcher observes the final state on the next frame.
+
+## Expression syntax
+
+| Supported | Examples |
+|---|---|
+| Values | finite numbers, quoted strings, `true`, `false`, `null`, `undefined` |
+| Unary operators | `!`, unary `+`, unary `-` |
+| Arithmetic | `+`, `-`, `*`, `/`, `%` |
+| Comparison | `==`, `!=`, `===`, `!==`, `<`, `<=`, `>`, `>=` |
+| Logic | <code>&amp;&amp;</code>, <code>&#124;&#124;</code> with short-circuit evaluation |
+| Grouping and lookup | parentheses, exact `vars["name"]` lookup |
+
+Assignments, function calls, general property access, `new`, arrays, objects, optional chaining, and template strings are rejected. Expression length, token count, nesting depth, and the parsed-expression cache are bounded.
 
 ## Blocks
 
@@ -106,6 +164,12 @@ Unregisters the conditional broadcast with the matching ID.
 
 <!-- END GENERATED BLOCKS -->
 
+## Compatibility
+
+The extension ID is `kubohiroyaruntimeexpression`. Projects that still store the old `twRuntimeExpression` opcodes need a schema-aware project migration; replacing only the JavaScript file will break those stored blocks.
+
+The `runtimeExpression` and `conditionalBroadcast` compile-time feature flags live in `config/feature-flags.ts`. Both are enabled by default.
+
 ## Development
 
 ```bash
@@ -113,7 +177,7 @@ npm install
 npm run check
 ```
 
-The build produces `dist/runtime-expression.js`. Commit the rebuilt file whenever extension source changes.
+The build produces `dist/runtime-expression.js`. Commit the rebuilt file whenever extension source changes. The block reference above is generated from `src/block-definitions.json`; keep the marker comments intact.
 
 ### GitHub Pages
 
