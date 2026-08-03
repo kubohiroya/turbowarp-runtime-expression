@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b0912">
+    <meta name="description" content="Learn how to use Runtime Expression to evaluate Temporary Variables and broadcast when conditions change in TurboWarp.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Runtime Expression — User Guide">
+    <meta property="og:description" content="Turn TurboWarp runtime variables into safe conditions and transition broadcasts.">
+    <meta property="og:url" content="https://kubohiroya.github.io/turbowarp-runtime-expression/">
+    <meta property="og:image" content="https://kubohiroya.github.io/turbowarp-runtime-expression/assets/og.png">
+    <meta property="og:image:alt" content="Runtime variables flowing through a condition into true and false states">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image:alt" content="Runtime variables flowing through a condition into true and false states">
+    <link rel="canonical" href="https://kubohiroya.github.io/turbowarp-runtime-expression/">
+    <link rel="alternate" hreflang="en" href="https://kubohiroya.github.io/turbowarp-runtime-expression/">
+    <link rel="alternate" hreflang="ja" href="https://kubohiroya.github.io/turbowarp-runtime-expression/ja/">
+    <link rel="alternate" hreflang="x-default" href="https://kubohiroya.github.io/turbowarp-runtime-expression/">
+    <link rel="stylesheet" href="./assets/site.css">
+    <title>Runtime Expression — User Guide</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="./" aria-label="Runtime Expression home">
+          <span class="brand-mark" aria-hidden="true">x?</span>
+          <span class="brand-name">Runtime Expression</span>
+        </a>
+        <nav class="main-nav" aria-label="Guide sections">
+          <a href="#start">Start</a>
+          <a href="#condition">Condition</a>
+          <a href="#broadcast">Broadcasts</a>
+          <a href="#syntax">Syntax</a>
+          <a href="#help">Help</a>
+        </nav>
+        <nav class="language-nav" aria-label="Language">
+          <a href="./" lang="en" aria-current="page">EN</a>
+          <a href="./ja/" lang="ja">日本語</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="content" class="page-shell">
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <p class="eyebrow">TurboWarp custom extension</p>
+          <h1 id="hero-title">Make state actionable.</h1>
+          <p class="lede">
+            Read Temporary Variables with safe, JavaScript-like conditions—then
+            broadcast only when a condition changes from false to true or back again.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#start">Set it up</a>
+            <a class="button button-secondary" href="#broadcast">See the behavior</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="Example: a runtime condition evaluates state equals ready to true">
+          <div class="visual-window">
+            <div class="window-bar" aria-hidden="true">
+              <i></i><i></i><i></i><span>Runtime Expression</span>
+            </div>
+            <div class="scratch-stack">
+              <div class="scratch-block">
+                condition <code>state == "ready"</code>
+              </div>
+              <div class="result-line">
+                <span>state = "ready"</span>
+                <span aria-hidden="true">→</span>
+                <span class="result-pill">true</span>
+              </div>
+              <div class="scratch-block">
+                register <code>watcher</code> conditional broadcast…
+              </div>
+              <div class="result-line">
+                <span>false → true</span>
+                <span aria-hidden="true">→</span>
+                <span class="result-pill">broadcast</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="start" class="section" aria-labelledby="start-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">01 · Start here</p>
+            <h2 id="start-title">Ready in three steps.</h2>
+          </div>
+          <p>
+            Runtime Expression reads variables provided by TurboWarp's Temporary
+            Variables extension. Load both extensions, then write conditions using
+            the runtime variable names already in your project.
+          </p>
+        </div>
+
+        <div class="step-grid">
+          <article class="step">
+            <span class="step-number">1</span>
+            <h3>Load Temporary Variables</h3>
+            <p>
+              Add TurboWarp's <strong>Temporary Variables</strong> extension first.
+              Runtime Expression uses its runtime variables as condition inputs.
+            </p>
+          </article>
+          <article class="step">
+            <span class="step-number">2</span>
+            <h3>Load Runtime Expression</h3>
+            <p>
+              Add <code>dist/runtime-expression.js</code> as a custom extension and
+              enable <strong>Run extension without sandbox</strong> when prompted.
+            </p>
+          </article>
+          <article class="step">
+            <span class="step-number">3</span>
+            <h3>Write a condition</h3>
+            <p>
+              Use a bare name such as <code>state</code>, or
+              <code>vars["current state"]</code> for names with spaces or non-ASCII
+              characters.
+            </p>
+          </article>
+        </div>
+
+        <div class="callout" role="note">
+          <span class="callout-mark" aria-hidden="true">!</span>
+          <p>
+            <strong>Unsandboxed access is required.</strong> The extension needs
+            direct access to the TurboWarp VM to read Temporary Variables and start
+            broadcast hats. Only load extension files from a source you trust.
+          </p>
+        </div>
+
+        <div class="code-card" style="margin-top: 1rem">
+          <span class="code-label">Version-pinned extension URL</span>
+          <pre><code>https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.1.0/dist/runtime-expression.js</code></pre>
+        </div>
+      </section>
+
+      <section id="condition" class="section" aria-labelledby="condition-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">02 · Boolean reporter</p>
+            <h2 id="condition-title">A safe answer, right now.</h2>
+          </div>
+          <p>
+            The condition block parses a limited expression, looks up referenced
+            runtime variables, and returns a Boolean. It never uses
+            <code>eval</code> or <code>new Function</code>.
+          </p>
+        </div>
+
+        <figure class="diagram" aria-labelledby="condition-diagram-title">
+          <figcaption id="condition-diagram-title" class="diagram-title">
+            What happens when the condition block runs
+          </figcaption>
+          <div class="flow">
+            <div class="flow-node">
+              <strong>Runtime values</strong>
+              <small><code>state</code> = "ready"<br><code>score</code> = 12</small>
+            </div>
+            <div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node flow-node-accent">
+              <strong>Restricted parser</strong>
+              <small><code>state == "ready" &amp;&amp; score &gt; 10</code></small>
+            </div>
+            <div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node flow-node-result">
+              <strong>true</strong>
+              <small>Boolean result</small>
+            </div>
+          </div>
+        </figure>
+
+        <div class="recipe-grid">
+          <article class="recipe">
+            <h3>Gate a script</h3>
+            <div class="code-card">
+              <span class="code-label">condition</span>
+              <pre><code>state == "ready" &amp;&amp; lives &gt; 0</code></pre>
+            </div>
+            <p>Use the Boolean result directly inside an <em>if</em> block.</p>
+          </article>
+          <article class="recipe">
+            <h3>Check a missing variable</h3>
+            <div class="code-card">
+              <span class="code-label">condition</span>
+              <pre><code>nextScene === undefined</code></pre>
+            </div>
+            <p>A runtime variable that does not exist reads as <code>undefined</code>.</p>
+          </article>
+          <article class="recipe">
+            <h3>Use any variable name</h3>
+            <div class="code-card">
+              <span class="code-label">condition</span>
+              <pre><code>vars["current state"] == "ready"
+&amp;&amp; vars["得点"] &gt;= 10</code></pre>
+            </div>
+            <p>The exact <code>vars["name"]</code> form handles spaces and Unicode.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="broadcast" class="section" aria-labelledby="broadcast-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">03 · Conditional broadcasts</p>
+            <h2 id="broadcast-title">Broadcast the transition—not the noise.</h2>
+          </div>
+          <p>
+            Register a named watcher once. Runtime Expression remembers the initial
+            result and checks referenced values each VM frame. A message is sent only
+            when the Boolean result crosses between false and true.
+          </p>
+        </div>
+
+        <figure class="diagram" aria-labelledby="broadcast-diagram-title">
+          <figcaption id="broadcast-diagram-title" class="diagram-title">
+            State changes and their messages
+          </figcaption>
+          <div class="state-map">
+            <div class="state state-false">
+              <strong>false</strong>
+              <small>not ready</small>
+            </div>
+            <div class="transition-stack">
+              <div class="transition">
+                <strong>false → true</strong>
+                broadcast the <em>true message</em>
+              </div>
+              <div class="transition">
+                <strong>true → false</strong>
+                broadcast the <em>false message</em>
+              </div>
+            </div>
+            <div class="state state-true">
+              <strong>true</strong>
+              <small>ready</small>
+            </div>
+          </div>
+          <div class="no-event">
+            <b aria-hidden="true">=</b>
+            <span>false → false and true → true send nothing</span>
+          </div>
+        </figure>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Event</th>
+                <th scope="col">What Runtime Expression does</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Register</td>
+                <td>Evaluates once to remember the initial state. No message is sent.</td>
+              </tr>
+              <tr>
+                <td>Referenced value changes</td>
+                <td>Re-evaluates on the next frame; unrelated variables are ignored.</td>
+              </tr>
+              <tr>
+                <td>Result changes</td>
+                <td>Sends the true or false message for that transition.</td>
+              </tr>
+              <tr>
+                <td>Same ID registered again</td>
+                <td>Atomically replaces the previous watcher and its remembered state.</td>
+              </tr>
+              <tr>
+                <td>Positive timeout expires</td>
+                <td>Removes the watcher silently. Zero or less means no timeout.</td>
+              </tr>
+              <tr>
+                <td>Unregister / project start / stop</td>
+                <td>Removes the watcher. Unregistering an unknown ID has no effect.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="two-column" style="margin-top: 1rem">
+          <article class="card">
+            <h3>One frame, one final state</h3>
+            <p>
+              Several updates before the next VM frame are coalesced. The watcher sees
+              the final values on that frame, avoiding a burst of intermediate messages.
+            </p>
+          </article>
+          <article class="card">
+            <h3>ID is the control handle</h3>
+            <p>
+              Choose a stable ID such as <code>level-ready</code>. Use the same ID to
+              replace or unregister that watcher later.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="syntax" class="section" aria-labelledby="syntax-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">04 · Expression language</p>
+            <h2 id="syntax-title">Familiar on purpose. Limited for safety.</h2>
+          </div>
+          <p>
+            The syntax resembles JavaScript comparisons and arithmetic, but it is not
+            JavaScript. Keep expressions focused on calculating a value from runtime
+            variables.
+          </p>
+        </div>
+
+        <div class="syntax-layout">
+          <article class="syntax-list supported">
+            <h3>Supported</h3>
+            <ul>
+              <li>Finite numbers, quoted strings, <code>true</code>, <code>false</code>, <code>null</code>, <code>undefined</code></li>
+              <li><code>!</code>, unary <code>+</code> and <code>-</code></li>
+              <li><code>+ - * / %</code></li>
+              <li><code>== != === !== &lt; &lt;= &gt; &gt;=</code></li>
+              <li><code>&amp;&amp;</code> and <code>||</code> with short-circuit behavior</li>
+              <li>Parentheses and exact <code>vars["name"]</code> lookup</li>
+            </ul>
+          </article>
+          <article class="syntax-list rejected">
+            <h3>Rejected</h3>
+            <ul>
+              <li>Assignments and updates</li>
+              <li>Function or method calls</li>
+              <li>General property access and optional chaining</li>
+              <li><code>new</code>, arrays, and object literals</li>
+              <li>Template strings</li>
+              <li>Expressions beyond built-in length, token, or nesting limits</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="tag-row" style="margin-top: 1rem" aria-label="Example operators">
+          <span class="tag">score &gt;= 10</span>
+          <span class="tag">state !== "paused"</span>
+          <span class="tag">!gameOver</span>
+          <span class="tag">coins % 2 == 0</span>
+          <span class="tag">a &amp;&amp; (b || c)</span>
+        </div>
+      </section>
+
+      <section id="help" class="section" aria-labelledby="help-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">05 · Troubleshooting</p>
+            <h2 id="help-title">When a condition surprises you.</h2>
+          </div>
+          <p>
+            Most problems come from extension order, string quoting, or a watcher being
+            cleared by the project lifecycle. These checks cover the usual cases.
+          </p>
+        </div>
+
+        <div class="card-grid">
+          <article class="card">
+            <h3>“Temporary Variables” error</h3>
+            <p>
+              Load the Temporary Variables extension before running a condition or
+              registering a watcher.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Text does not compare correctly</h3>
+            <p>
+              Quote string values: write <code>state == "ready"</code>, not
+              <code>state == ready</code>. The unquoted word is another variable name.
+            </p>
+          </article>
+          <article class="card">
+            <h3>No message after registration</h3>
+            <p>
+              That is expected. Registration stores the initial result silently. Change
+              the condition across false/true to send a message.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Watcher stopped after Start or Stop</h3>
+            <p>
+              Project start and stop clear every registration. Register watchers again
+              from your startup scripts.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Name contains spaces or Japanese</h3>
+            <p>
+              Use the exact lookup form, for example
+              <code>vars["current state"]</code> or <code>vars["得点"]</code>.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Syntax error</h3>
+            <p>
+              Reduce the expression to one comparison, check quotes and parentheses,
+              then add each logical clause back one at a time.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p>Runtime Expression · MPL-2.0</p>
+        <div class="footer-links">
+          <a href="https://github.com/kubohiroya/turbowarp-runtime-expression">Source</a>
+          <a href="https://github.com/kubohiroya/turbowarp-runtime-expression/issues">Report a problem</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

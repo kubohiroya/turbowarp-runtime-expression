@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b0912">
+    <meta name="description" content="TurboWarpのRuntime ExpressionでTemporary Variablesを条件として評価し、真偽が変化したときにbroadcastする方法を説明します。">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Runtime Expression — 利用ガイド">
+    <meta property="og:description" content="TurboWarpのランタイム変数を、安全な条件式と状態遷移broadcastに変換します。">
+    <meta property="og:url" content="https://kubohiroya.github.io/turbowarp-runtime-expression/ja/">
+    <meta property="og:image" content="https://kubohiroya.github.io/turbowarp-runtime-expression/assets/og.png">
+    <meta property="og:image:alt" content="ランタイム変数が条件式を通り、trueとfalseの状態へ分かれる図">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image:alt" content="ランタイム変数が条件式を通り、trueとfalseの状態へ分かれる図">
+    <link rel="canonical" href="https://kubohiroya.github.io/turbowarp-runtime-expression/ja/">
+    <link rel="alternate" hreflang="en" href="https://kubohiroya.github.io/turbowarp-runtime-expression/">
+    <link rel="alternate" hreflang="ja" href="https://kubohiroya.github.io/turbowarp-runtime-expression/ja/">
+    <link rel="alternate" hreflang="x-default" href="https://kubohiroya.github.io/turbowarp-runtime-expression/">
+    <link rel="stylesheet" href="../assets/site.css">
+    <title>Runtime Expression — 利用ガイド</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">本文へ移動</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../" aria-label="Runtime Expression トップ">
+          <span class="brand-mark" aria-hidden="true">x?</span>
+          <span class="brand-name">Runtime Expression</span>
+        </a>
+        <nav class="main-nav" aria-label="ガイド内メニュー">
+          <a href="#start">準備</a>
+          <a href="#condition">条件式</a>
+          <a href="#broadcast">Broadcast</a>
+          <a href="#syntax">構文</a>
+          <a href="#help">困ったとき</a>
+        </nav>
+        <nav class="language-nav" aria-label="言語">
+          <a href="../" lang="en">EN</a>
+          <a href="./" lang="ja" aria-current="page">日本語</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="content" class="page-shell">
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <p class="eyebrow">TurboWarp カスタム拡張</p>
+          <h1 id="hero-title">状態を、動きに変える。</h1>
+          <p class="lede">
+            Temporary Variablesを安全なJavaScript風の条件式で読み取り、条件が
+            falseからtrueへ、またはtrueからfalseへ変化したときだけbroadcastします。
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#start">使い始める</a>
+            <a class="button button-secondary" href="#broadcast">動作を見る</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="ランタイム条件 state equals ready がtrueになる例">
+          <div class="visual-window">
+            <div class="window-bar" aria-hidden="true">
+              <i></i><i></i><i></i><span>Runtime Expression</span>
+            </div>
+            <div class="scratch-stack">
+              <div class="scratch-block">
+                condition <code>state == "ready"</code>
+              </div>
+              <div class="result-line">
+                <span>state = "ready"</span>
+                <span aria-hidden="true">→</span>
+                <span class="result-pill">true</span>
+              </div>
+              <div class="scratch-block">
+                register <code>watcher</code> conditional broadcast…
+              </div>
+              <div class="result-line">
+                <span>false → true</span>
+                <span aria-hidden="true">→</span>
+                <span class="result-pill">broadcast</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="start" class="section" aria-labelledby="start-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">01 · はじめに</p>
+            <h2 id="start-title">3ステップで準備完了。</h2>
+          </div>
+          <p>
+            Runtime ExpressionはTurboWarpのTemporary Variables拡張が提供するランタイム変数を
+            読み取ります。2つの拡張を読み込み、プロジェクトで使っている変数名を条件式に書きます。
+          </p>
+        </div>
+
+        <div class="step-grid">
+          <article class="step">
+            <span class="step-number">1</span>
+            <h3>Temporary Variablesを読み込む</h3>
+            <p>
+              最初にTurboWarpの<strong>Temporary Variables</strong>拡張を追加します。
+              そのランタイム変数が条件式の入力になります。
+            </p>
+          </article>
+          <article class="step">
+            <span class="step-number">2</span>
+            <h3>Runtime Expressionを読み込む</h3>
+            <p>
+              <code>dist/runtime-expression.js</code>をカスタム拡張として追加し、確認画面で
+              <strong>サンドボックス化せずに拡張機能を実行する</strong>を有効にします。
+            </p>
+          </article>
+          <article class="step">
+            <span class="step-number">3</span>
+            <h3>条件式を書く</h3>
+            <p>
+              <code>state</code>のように変数名をそのまま書けます。空白や日本語を含む名前は
+              <code>vars["現在の状態"]</code>と書きます。
+            </p>
+          </article>
+        </div>
+
+        <div class="callout" role="note">
+          <span class="callout-mark" aria-hidden="true">!</span>
+          <p>
+            <strong>サンドボックス外での実行が必要です。</strong>
+            Temporary Variablesの読み取りとbroadcastハットの開始にはTurboWarp VMへの直接アクセスが
+            必要です。信頼できる配布元の拡張ファイルだけを読み込んでください。
+          </p>
+        </div>
+
+        <div class="code-card" style="margin-top: 1rem">
+          <span class="code-label">バージョン固定の拡張URL</span>
+          <pre><code>https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.1.0/dist/runtime-expression.js</code></pre>
+        </div>
+      </section>
+
+      <section id="condition" class="section" aria-labelledby="condition-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">02 · 真偽値レポーター</p>
+            <h2 id="condition-title">今の状態を、安全に判定。</h2>
+          </div>
+          <p>
+            conditionブロックは制限された式を解析し、参照されたランタイム変数を読み、真偽値を
+            返します。<code>eval</code>や<code>new Function</code>は使用しません。
+          </p>
+        </div>
+
+        <figure class="diagram" aria-labelledby="condition-diagram-title">
+          <figcaption id="condition-diagram-title" class="diagram-title">
+            conditionブロックを実行したときの流れ
+          </figcaption>
+          <div class="flow">
+            <div class="flow-node">
+              <strong>ランタイム値</strong>
+              <small><code>state</code> = "ready"<br><code>score</code> = 12</small>
+            </div>
+            <div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node flow-node-accent">
+              <strong>制限付きパーサー</strong>
+              <small><code>state == "ready" &amp;&amp; score &gt; 10</code></small>
+            </div>
+            <div class="flow-arrow" aria-hidden="true">→</div>
+            <div class="flow-node flow-node-result">
+              <strong>true</strong>
+              <small>真偽値の結果</small>
+            </div>
+          </div>
+        </figure>
+
+        <div class="recipe-grid">
+          <article class="recipe">
+            <h3>スクリプトの実行条件にする</h3>
+            <div class="code-card">
+              <span class="code-label">condition</span>
+              <pre><code>state == "ready" &amp;&amp; lives &gt; 0</code></pre>
+            </div>
+            <p>返された真偽値を「もし」ブロックの条件としてそのまま使えます。</p>
+          </article>
+          <article class="recipe">
+            <h3>変数が存在しないか調べる</h3>
+            <div class="code-card">
+              <span class="code-label">condition</span>
+              <pre><code>nextScene === undefined</code></pre>
+            </div>
+            <p>存在しないランタイム変数は<code>undefined</code>として読み取られます。</p>
+          </article>
+          <article class="recipe">
+            <h3>どんな変数名でも使う</h3>
+            <div class="code-card">
+              <span class="code-label">condition</span>
+              <pre><code>vars["current state"] == "ready"
+&amp;&amp; vars["得点"] &gt;= 10</code></pre>
+            </div>
+            <p><code>vars["名前"]</code>の形なら、空白やUnicodeを含む名前を扱えます。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="broadcast" class="section" aria-labelledby="broadcast-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">03 · 条件付きBroadcast</p>
+            <h2 id="broadcast-title">値ではなく、変化をbroadcast。</h2>
+          </div>
+          <p>
+            名前付きの監視を一度登録すると、最初の結果を記憶し、VMの各フレームで参照値を確認します。
+            真偽値がfalseとtrueの間を移動したときだけメッセージを送ります。
+          </p>
+        </div>
+
+        <figure class="diagram" aria-labelledby="broadcast-diagram-title">
+          <figcaption id="broadcast-diagram-title" class="diagram-title">
+            状態の変化と送られるメッセージ
+          </figcaption>
+          <div class="state-map">
+            <div class="state state-false">
+              <strong>false</strong>
+              <small>準備未完了</small>
+            </div>
+            <div class="transition-stack">
+              <div class="transition">
+                <strong>false → true</strong>
+                <em>true時のメッセージ</em>をbroadcast
+              </div>
+              <div class="transition">
+                <strong>true → false</strong>
+                <em>false時のメッセージ</em>をbroadcast
+              </div>
+            </div>
+            <div class="state state-true">
+              <strong>true</strong>
+              <small>準備完了</small>
+            </div>
+          </div>
+          <div class="no-event">
+            <b aria-hidden="true">=</b>
+            <span>false → false と true → true では何も送りません</span>
+          </div>
+        </figure>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">出来事</th>
+                <th scope="col">Runtime Expressionの動作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>登録</td>
+                <td>最初の状態を記憶するため一度評価します。メッセージは送りません。</td>
+              </tr>
+              <tr>
+                <td>参照している値が変化</td>
+                <td>次のフレームで再評価します。関係のない変数は無視します。</td>
+              </tr>
+              <tr>
+                <td>判定結果が変化</td>
+                <td>その遷移に対応するtrue時またはfalse時のメッセージを送ります。</td>
+              </tr>
+              <tr>
+                <td>同じIDを再登録</td>
+                <td>以前の監視と記憶状態を新しい登録で一括して置き換えます。</td>
+              </tr>
+              <tr>
+                <td>正のタイムアウトが満了</td>
+                <td>通知せずに監視を削除します。0以下はタイムアウトなしです。</td>
+              </tr>
+              <tr>
+                <td>登録解除／プロジェクト開始・停止</td>
+                <td>監視を削除します。存在しないIDの登録解除は何もしません。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="two-column" style="margin-top: 1rem">
+          <article class="card">
+            <h3>1フレームでは最終状態を1回</h3>
+            <p>
+              次のVMフレームまでに複数回更新されてもまとめて扱います。そのフレームでの最終値だけを
+              確認するため、途中状態のメッセージが大量に送られることを防ぎます。
+            </p>
+          </article>
+          <article class="card">
+            <h3>IDが操作用の名前</h3>
+            <p>
+              <code>level-ready</code>のように変わらないIDを付けます。同じIDを使って、あとから監視を
+              置き換えたり、登録解除したりできます。
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="syntax" class="section" aria-labelledby="syntax-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">04 · 条件式の言語</p>
+            <h2 id="syntax-title">意図的に、見慣れた書き方だけ。</h2>
+          </div>
+          <p>
+            JavaScriptの比較や計算に似ていますが、JavaScriptそのものではありません。
+            ランタイム変数から値を計算する、短く明確な条件式にしてください。
+          </p>
+        </div>
+
+        <div class="syntax-layout">
+          <article class="syntax-list supported">
+            <h3>使用できるもの</h3>
+            <ul>
+              <li>有限数、引用符付き文字列、<code>true</code>、<code>false</code>、<code>null</code>、<code>undefined</code></li>
+              <li><code>!</code>、単項<code>+</code>と<code>-</code></li>
+              <li><code>+ - * / %</code></li>
+              <li><code>== != === !== &lt; &lt;= &gt; &gt;=</code></li>
+              <li>短絡評価する<code>&amp;&amp;</code>と<code>||</code></li>
+              <li>丸括弧と厳密な<code>vars["名前"]</code>参照</li>
+            </ul>
+          </article>
+          <article class="syntax-list rejected">
+            <h3>使用できないもの</h3>
+            <ul>
+              <li>代入と更新</li>
+              <li>関数やメソッドの呼び出し</li>
+              <li>一般的なプロパティ参照とオプショナルチェーン</li>
+              <li><code>new</code>、配列、オブジェクトリテラル</li>
+              <li>テンプレート文字列</li>
+              <li>組み込みの長さ・トークン数・入れ子上限を超える式</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="tag-row" style="margin-top: 1rem" aria-label="演算子の例">
+          <span class="tag">score &gt;= 10</span>
+          <span class="tag">state !== "paused"</span>
+          <span class="tag">!gameOver</span>
+          <span class="tag">coins % 2 == 0</span>
+          <span class="tag">a &amp;&amp; (b || c)</span>
+        </div>
+      </section>
+
+      <section id="help" class="section" aria-labelledby="help-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">05 · トラブルシューティング</p>
+            <h2 id="help-title">思った判定にならないとき。</h2>
+          </div>
+          <p>
+            よくある原因は拡張の読み込み順、文字列の引用符、プロジェクトの開始・停止による監視解除です。
+            まず次の項目を確認してください。
+          </p>
+        </div>
+
+        <div class="card-grid">
+          <article class="card">
+            <h3>「Temporary Variables」エラー</h3>
+            <p>
+              条件判定や監視登録を実行する前に、Temporary Variables拡張を読み込んでください。
+            </p>
+          </article>
+          <article class="card">
+            <h3>文字の比較が合わない</h3>
+            <p>
+              <code>state == "ready"</code>のように文字列を引用符で囲みます。引用符のない
+              <code>ready</code>は別の変数名として扱われます。
+            </p>
+          </article>
+          <article class="card">
+            <h3>登録直後にメッセージが来ない</h3>
+            <p>
+              正常な動作です。登録時は最初の結果を通知せず記憶します。falseとtrueの間を変化させると
+              メッセージが送られます。
+            </p>
+          </article>
+          <article class="card">
+            <h3>開始・停止後に監視されない</h3>
+            <p>
+              プロジェクトの開始と停止では全登録が解除されます。起動用スクリプトから監視を再登録して
+              ください。
+            </p>
+          </article>
+          <article class="card">
+            <h3>変数名に空白や日本語がある</h3>
+            <p>
+              <code>vars["current state"]</code>や<code>vars["得点"]</code>のように、厳密な参照形式を
+              使用します。
+            </p>
+          </article>
+          <article class="card">
+            <h3>構文エラーになる</h3>
+            <p>
+              式を1つの比較まで短くし、引用符と丸括弧を確認してから、論理条件を1つずつ戻します。
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <p>Runtime Expression · MPL-2.0</p>
+        <div class="footer-links">
+          <a href="https://github.com/kubohiroya/turbowarp-runtime-expression">ソース</a>
+          <a href="https://github.com/kubohiroya/turbowarp-runtime-expression/issues">問題を報告</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

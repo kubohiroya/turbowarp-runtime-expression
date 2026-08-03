@@ -9,6 +9,8 @@ import {readRuntimeVariable, requireRuntimeVariables} from './runtime-variables.
 
 export const EXTENSION_ID = 'kubohiroyaruntimeexpression';
 export const EXTENSION_VERSION = '2026-08-03-condition-syntax-v1';
+export const DOCS_URI =
+  'https://kubohiroya.github.io/turbowarp-runtime-expression/';
 
 type BlockArgs = Record<string, unknown>;
 
@@ -50,6 +52,7 @@ export class RuntimeExpressionExtension {
     return {
       id: EXTENSION_ID,
       name: Scratch.translate(definitions.extensionName),
+      docsURI: DOCS_URI,
       color1: '#6f5bd3',
       color2: '#5845b8',
       color3: '#40328e',

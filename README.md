@@ -2,6 +2,8 @@
 
 A safe JavaScript-like condition evaluator and conditional broadcast monitor for TurboWarp Temporary Variables runtime variables.
 
+**User guide:** [English (default)](https://kubohiroya.github.io/turbowarp-runtime-expression/) · [日本語](https://kubohiroya.github.io/turbowarp-runtime-expression/ja/)
+
 ## Installation
 
 Build or download `dist/runtime-expression.js`, then load it as a local custom extension in TurboWarp Desktop with **Run extension without sandbox** enabled. Load TurboWarp's **Temporary Variables** extension before using the condition or conditional broadcast blocks.
@@ -112,6 +114,12 @@ npm run check
 ```
 
 The build produces `dist/runtime-expression.js`. Commit the rebuilt file whenever extension source changes.
+
+### GitHub Pages
+
+The workflow in `.github/workflows/pages.yml` publishes `docs/` after documentation changes reach `main`. The English guide is served at the site root and the Japanese guide at `/ja/`.
+
+To roll back the guide, revert the documentation and workflow change. For an immediate withdrawal, disable the Pages workflow and GitHub Pages in the repository settings; this does not affect the extension runtime.
 
 ## License
 

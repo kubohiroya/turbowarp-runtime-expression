@@ -1,6 +1,9 @@
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {FEATURE_FLAGS} from '../config/feature-flags.js';
-import {RuntimeExpressionExtension} from '../src/extension.js';
+import {
+  DOCS_URI,
+  RuntimeExpressionExtension
+} from '../src/extension.js';
 
 describe('Runtime Expression extension', () => {
   const values = new Map<string, unknown>();
@@ -87,6 +90,13 @@ describe('Runtime Expression extension', () => {
     expect(
       new RuntimeExpressionExtension().getInfo().blocks[0]
     ).toMatchObject({hideFromPalette: true});
+  });
+
+  it('links the English-default GitHub Pages user guide', () => {
+    expect(new RuntimeExpressionExtension().getInfo().docsURI).toBe(DOCS_URI);
+    expect(DOCS_URI).toBe(
+      'https://kubohiroya.github.io/turbowarp-runtime-expression/'
+    );
   });
 
   it('registers frame monitoring and clears registrations on project lifecycle events', () => {
