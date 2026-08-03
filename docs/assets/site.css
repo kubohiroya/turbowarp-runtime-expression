@@ -87,7 +87,7 @@ button:focus-visible {
   display: flex;
   align-items: center;
   min-height: 4.5rem;
-  gap: 1.25rem;
+  gap: 0.8rem;
 }
 
 .brand {
@@ -133,6 +133,38 @@ button:focus-visible {
 .language-nav a:hover {
   color: var(--ink);
   background: rgb(255 255 255 / 6%);
+}
+
+.github-link {
+  display: inline-flex;
+  min-height: 2.3rem;
+  align-items: center;
+  gap: 0.48rem;
+  padding: 0.38rem 0.68rem;
+  color: var(--muted);
+  background: rgb(255 255 255 / 3%);
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.github-link img {
+  width: 1.18rem;
+  height: 1.18rem;
+  opacity: 0.8;
+  filter: invert(1);
+}
+
+.github-link:hover {
+  color: var(--ink);
+  background: rgb(255 255 255 / 8%);
+  border-color: rgb(155 135 255 / 55%);
+}
+
+.github-link:hover img {
+  opacity: 1;
 }
 
 .language-nav {
@@ -749,6 +781,7 @@ tr:last-child td {
 @media (max-width: 42rem) {
   .header-inner {
     min-height: 4rem;
+    gap: 0.4rem;
   }
 
   .brand-name {
@@ -756,7 +789,18 @@ tr:last-child td {
   }
 
   .language-nav {
-    margin-left: auto;
+    margin-left: 0;
+    padding-left: 0.4rem;
+  }
+
+  .github-link {
+    width: 2.35rem;
+    padding: 0.4rem;
+    justify-content: center;
+  }
+
+  .github-link-label {
+    display: none;
   }
 
   .hero {
