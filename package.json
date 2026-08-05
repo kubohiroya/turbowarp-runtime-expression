@@ -13,6 +13,15 @@
   "bugs": {
     "url": "https://github.com/kubohiroya/turbowarp-runtime-expression/issues"
   },
+  "exports": {
+    "./composition": {
+      "types": "./dist/types/composition.d.ts",
+      "import": "./dist/composition.js"
+    },
+    "./runtime-expression.js": "./dist/runtime-expression.js",
+    "./dist/runtime-expression.js": "./dist/runtime-expression.js",
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist/",
     "README.md",
@@ -27,15 +36,19 @@
   "scripts": {
     "dev": "vite build --watch",
     "typecheck": "tsc --noEmit",
-    "build": "vite build",
+    "build": "npm run build:extension && npm run build:composition && npm run build:types",
+    "build:extension": "vite build",
+    "build:composition": "vite build --config vite.composition.config.ts",
+    "build:types": "tsc --project tsconfig.build.json",
+    "types:composition:check": "tsc --project tsconfig.composition-consumer.json",
     "test": "vitest run",
     "docs": "node scripts/generate-readme.mjs",
     "docs:check": "npm run docs && git diff --exit-code -- README.md",
     "check:dist": "npm run build && git diff --exit-code -- dist",
     "pack:check": "npm pack --dry-run --ignore-scripts",
     "release:check": "npm publish --dry-run --access public",
-    "check": "npm run typecheck && npm run test && npm run build && npm run docs:check && npm run check:dist && npm run pack:check",
-    "prepack": "npm run check"
+    "check": "npm run typecheck && npm run test && npm run build && npm run types:composition:check && npm run docs:check && npm run check:dist && npm run pack:check",
+    "prepack": "npm run build"
   },
   "devDependencies": {
     "@kubohiroya/vite-plugin-turbowarp-extension": "0.1.0",

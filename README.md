@@ -58,6 +58,32 @@ npm install --save-exact @kubohiroya/turbowarp-runtime-expression@0.2.0
 
 Then load `node_modules/@kubohiroya/turbowarp-runtime-expression/dist/runtime-expression.js`.
 
+## Composition API
+
+Applications that already own their runtime state can evaluate the same restricted
+condition language without registering Scratch blocks or using Temporary Variables:
+
+```ts
+import {createRuntimeExpressionComposition} from
+  '@kubohiroya/turbowarp-runtime-expression/composition';
+
+const expressions = createRuntimeExpressionComposition();
+const canContinue = expressions.evaluateCondition(
+  'state === "ready" && score >= 10',
+  {state: 'ready', score: 10}
+);
+
+expressions.releaseAll();
+```
+
+The variables argument must be a plain object whose own enumerable data properties
+contain only strings, finite numbers, or booleans. Inherited and unknown variables
+are not resolved. An unknown variable that is actually evaluated throws a
+`RuntimeExpressionCompositionError`; normal logical short-circuiting still applies.
+`releaseAll()` clears the bounded parsed-expression cache and the composition remains
+reusable. Importing this entry point does not read `Scratch`, the DOM, network,
+storage, or Temporary Variables.
+
 ## Check the current state
 
 A bare name reads the runtime variable with the same name:
@@ -177,7 +203,7 @@ npm install
 npm run check
 ```
 
-The build produces `dist/runtime-expression.js`. Commit the rebuilt file whenever extension source changes. The block reference above is generated from `src/block-definitions.json`; keep the marker comments intact.
+The build produces `dist/runtime-expression.js`, `dist/composition.js`, and declarations in `dist/types/`. Commit the rebuilt files whenever source changes. The block reference above is generated from `src/block-definitions.json`; keep the marker comments intact.
 
 ### GitHub Pages
 
