@@ -494,6 +494,10 @@ export function evaluateConditionExpression(
 export class ConditionEvaluator {
   private readonly cache = new Map<string, ConditionExpression>();
 
+  clearCache(): void {
+    this.cache.clear();
+  }
+
   parse(expression: string): ConditionExpression {
     const cached = this.cache.get(expression);
     if (cached) {

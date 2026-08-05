@@ -449,6 +449,9 @@
     constructor() {
       __publicField(this, "cache", /* @__PURE__ */ new Map());
     }
+    clearCache() {
+      this.cache.clear();
+    }
     parse(expression) {
       const cached = this.cache.get(expression);
       if (cached) {
