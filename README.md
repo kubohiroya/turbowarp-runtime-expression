@@ -37,7 +37,7 @@ You need:
 2. Add the following URL as a custom extension:
 
    ```text
-   https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.2.0/dist/runtime-expression.js
+   https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.3.0/dist/runtime-expression.js
    ```
 
 3. Enable **Run extension without sandbox** when TurboWarp asks.
@@ -53,7 +53,7 @@ The block now reports `true`. If `state` is missing or contains another value, i
 To install the reviewed build from npm instead:
 
 ```bash
-npm install --save-exact @kubohiroya/turbowarp-runtime-expression@0.2.0
+npm install --save-exact @kubohiroya/turbowarp-runtime-expression@0.3.0
 ```
 
 Then load `node_modules/@kubohiroya/turbowarp-runtime-expression/dist/runtime-expression.js`.
@@ -210,6 +210,13 @@ The build produces `dist/runtime-expression.js`, `dist/composition.js`, and decl
 The workflow in `.github/workflows/pages.yml` publishes `docs/` after documentation changes reach `main`. The English guide is served at the site root and the Japanese guide at `/ja/`.
 
 To roll back the guide, revert the documentation and workflow change. For an immediate withdrawal, disable the Pages workflow and GitHub Pages in the repository settings; this does not affect the extension runtime.
+
+### Releases
+
+The tag-triggered release workflow checks the immutable source, packs the npm
+artifact, and attaches the standalone bundle, composition bundle, declarations,
+and tarball to the matching GitHub Release. Follow [RELEASING.md](RELEASING.md)
+for versioning, npm publication, verification, and rollback.
 
 ## License
 
