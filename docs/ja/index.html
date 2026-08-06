@@ -32,6 +32,7 @@
           <a href="#start">準備</a>
           <a href="#condition">条件式</a>
           <a href="#broadcast">Broadcast</a>
+          <a href="#composition">Composition</a>
           <a href="#syntax">構文</a>
           <a href="#help">困ったとき</a>
         </nav>
@@ -141,7 +142,7 @@
 
         <div class="code-card" style="margin-top: 1rem">
           <span class="code-label">バージョン固定の拡張URL</span>
-          <pre><code>https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.2.0/dist/runtime-expression.js</code></pre>
+          <pre><code>https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.3.0/dist/runtime-expression.js</code></pre>
         </div>
       </section>
 
@@ -305,10 +306,46 @@
         </div>
       </section>
 
+      <section id="composition" class="section" aria-labelledby="composition-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">04 · Composition API</p>
+            <h2 id="composition-title">Scratchブロックなしで、同じ評価器を使う。</h2>
+          </div>
+          <p>
+            状態を管理するアプリケーションは純粋な評価器を直接importできます。Scratch、DOM、
+            network、storage、Temporary Variablesを読み取りません。
+          </p>
+        </div>
+        <div class="code-card">
+          <span class="code-label">TypeScript / ESM</span>
+          <pre><code>import {createRuntimeExpressionComposition} from
+  '@kubohiroya/turbowarp-runtime-expression/composition';
+
+const expressions = createRuntimeExpressionComposition();
+const ready = expressions.evaluateCondition(
+  'state === "ready" &amp;&amp; score &gt;= 10',
+  {state: 'ready', score: 10}
+);
+
+expressions.releaseAll();</code></pre>
+        </div>
+        <div class="two-column" style="margin-top: 1rem">
+          <article class="card">
+            <h3>fail-closedな入力</h3>
+            <p>ownかつenumerableなstring、有限number、booleanだけを許可します。未知または不正な値は安定したエラーになります。</p>
+          </article>
+          <article class="card">
+            <h3>上限付きで再利用可能</h3>
+            <p>制限付きparserと上限付きcacheを共有します。<code>releaseAll()</code>で式を解放した後も同じinstanceを再利用できます。</p>
+          </article>
+        </div>
+      </section>
+
       <section id="syntax" class="section" aria-labelledby="syntax-title">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">04 · 条件式の言語</p>
+            <p class="eyebrow">05 · 条件式の言語</p>
             <h2 id="syntax-title">意図的に、見慣れた書き方だけ。</h2>
           </div>
           <p>
@@ -354,7 +391,7 @@
       <section id="help" class="section" aria-labelledby="help-title">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">05 · トラブルシューティング</p>
+            <p class="eyebrow">06 · トラブルシューティング</p>
             <h2 id="help-title">思った判定にならないとき。</h2>
           </div>
           <p>

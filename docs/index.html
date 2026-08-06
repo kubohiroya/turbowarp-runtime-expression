@@ -32,6 +32,7 @@
           <a href="#start">Start</a>
           <a href="#condition">Condition</a>
           <a href="#broadcast">Broadcasts</a>
+          <a href="#composition">Composition</a>
           <a href="#syntax">Syntax</a>
           <a href="#help">Help</a>
         </nav>
@@ -143,7 +144,7 @@
 
         <div class="code-card" style="margin-top: 1rem">
           <span class="code-label">Version-pinned extension URL</span>
-          <pre><code>https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.2.0/dist/runtime-expression.js</code></pre>
+          <pre><code>https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.3.0/dist/runtime-expression.js</code></pre>
         </div>
       </section>
 
@@ -309,10 +310,46 @@
         </div>
       </section>
 
+      <section id="composition" class="section" aria-labelledby="composition-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">04 · Composition API</p>
+            <h2 id="composition-title">Use the same evaluator without Scratch blocks.</h2>
+          </div>
+          <p>
+            Applications that own their state can import the pure evaluator directly.
+            It does not read Scratch, the DOM, network, storage, or Temporary Variables.
+          </p>
+        </div>
+        <div class="code-card">
+          <span class="code-label">TypeScript / ESM</span>
+          <pre><code>import {createRuntimeExpressionComposition} from
+  '@kubohiroya/turbowarp-runtime-expression/composition';
+
+const expressions = createRuntimeExpressionComposition();
+const ready = expressions.evaluateCondition(
+  'state === "ready" &amp;&amp; score &gt;= 10',
+  {state: 'ready', score: 10}
+);
+
+expressions.releaseAll();</code></pre>
+        </div>
+        <div class="two-column" style="margin-top: 1rem">
+          <article class="card">
+            <h3>Fail-closed inputs</h3>
+            <p>Only own enumerable string, finite-number, and Boolean values are accepted. Unknown or invalid values produce stable errors.</p>
+          </article>
+          <article class="card">
+            <h3>Bounded and reusable</h3>
+            <p>The evaluator shares the restricted parser and bounded cache. <code>releaseAll()</code> clears cached expressions without invalidating the instance.</p>
+          </article>
+        </div>
+      </section>
+
       <section id="syntax" class="section" aria-labelledby="syntax-title">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">04 · Expression language</p>
+            <p class="eyebrow">05 · Expression language</p>
             <h2 id="syntax-title">Familiar on purpose. Limited for safety.</h2>
           </div>
           <p>
@@ -359,7 +396,7 @@
       <section id="help" class="section" aria-labelledby="help-title">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">05 · Troubleshooting</p>
+            <p class="eyebrow">06 · Troubleshooting</p>
             <h2 id="help-title">When a condition surprises you.</h2>
           </div>
           <p>
