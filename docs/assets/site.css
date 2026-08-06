@@ -86,7 +86,7 @@ button:focus-visible {
 .header-inner {
   display: flex;
   align-items: center;
-  min-height: 4.5rem;
+  min-height: 4rem;
   gap: 0.8rem;
 }
 
@@ -806,6 +806,10 @@ tr:last-child td {
   .hero {
     min-height: auto;
     padding-bottom: 3rem;
+  }
+
+  .hero-visual::before {
+    right: 0;
   }
 
   h1 {
