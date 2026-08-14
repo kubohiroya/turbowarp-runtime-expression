@@ -1,6 +1,7 @@
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {FEATURE_FLAGS} from '../config/feature-flags.js';
 import {
+  BLOCK_ICON_URI,
   DOCS_URI,
   RuntimeExpressionExtension
 } from '../src/extension.js';
@@ -93,10 +94,16 @@ describe('Runtime Expression extension', () => {
   });
 
   it('links the English-default GitHub Pages user guide', () => {
-    expect(new RuntimeExpressionExtension().getInfo().docsURI).toBe(DOCS_URI);
+    const info = new RuntimeExpressionExtension().getInfo();
+    expect(info.docsURI).toBe(DOCS_URI);
     expect(DOCS_URI).toBe(
       'https://kubohiroya.github.io/turbowarp-runtime-expression/'
     );
+    expect(info.blockIconURI).toBe(BLOCK_ICON_URI);
+    const iconSvg = decodeURIComponent(BLOCK_ICON_URI.slice('data:image/svg+xml,'.length));
+    expect(iconSvg).toContain('viewBox="0 0 64 64"');
+    expect(iconSvg).toContain('M7 32h13l12-12 12 12');
+    expect(iconSvg).not.toContain('<rect');
   });
 
   it('registers frame monitoring and clears registrations on project lifecycle events', () => {

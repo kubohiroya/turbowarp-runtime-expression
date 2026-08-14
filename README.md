@@ -37,7 +37,7 @@ You need:
 2. Add the following URL as a custom extension:
 
    ```text
-   https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.3.0/dist/runtime-expression.js
+   https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.4.0/dist/runtime-expression.js
    ```
 
 3. Enable **Run extension without sandbox** when TurboWarp asks.
@@ -53,7 +53,7 @@ The block now reports `true`. If `state` is missing or contains another value, i
 To install the reviewed build from npm instead:
 
 ```bash
-npm install --save-exact @kubohiroya/turbowarp-runtime-expression@0.3.0
+npm install --save-exact @kubohiroya/turbowarp-runtime-expression@0.4.0
 ```
 
 Then load `node_modules/@kubohiroya/turbowarp-runtime-expression/dist/runtime-expression.js`.

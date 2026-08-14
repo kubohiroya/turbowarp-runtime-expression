@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0 — 2026-08-14
+
+- Add a self-contained SVG block icon for identifying Runtime Expression blocks in TurboWarp.
+- Keep block opcodes, feature flags, expression semantics, and runtime behavior unchanged.
+- Roll back by pinning `@kubohiroya/turbowarp-runtime-expression@0.3.0`.
+
 ## 0.3.0 — 2026-08-06
 
 - Add the `@kubohiroya/turbowarp-runtime-expression/composition` ESM entry point.
