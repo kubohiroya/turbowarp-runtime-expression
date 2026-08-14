@@ -11,6 +11,9 @@ export const EXTENSION_ID = 'kubohiroyaruntimeexpression';
 export const EXTENSION_VERSION = '2026-08-03-condition-syntax-v1';
 export const DOCS_URI =
   'https://kubohiroya.github.io/turbowarp-runtime-expression/';
+export const BLOCK_ICON_URI = `data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><g fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 32h13l12-12 12 12-12 12-12-12M44 32l11-11M44 32l11 11"/><circle cx="56" cy="20" r="2" fill="#fff"/><circle cx="56" cy="44" r="2" fill="#fff"/></g></svg>'
+)}`;
 
 type BlockArgs = Record<string, unknown>;
 
@@ -53,6 +56,7 @@ export class RuntimeExpressionExtension {
       id: EXTENSION_ID,
       name: Scratch.translate(definitions.extensionName),
       docsURI: DOCS_URI,
+      blockIconURI: BLOCK_ICON_URI,
       color1: '#6f5bd3',
       color2: '#5845b8',
       color3: '#40328e',
