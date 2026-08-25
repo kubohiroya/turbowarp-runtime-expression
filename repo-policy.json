@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "productName": "TurboWarp Runtime Expression",
+  "productName": "TurboWarp-Runtime-Expression",
   "packageType": "extension-composition",
   "licensePolicy": "mpl-2.0",
   "packageManager": "pnpm",
