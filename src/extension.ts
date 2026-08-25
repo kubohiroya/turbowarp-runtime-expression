@@ -8,7 +8,7 @@ import {
 import {readRuntimeVariable, requireRuntimeVariables} from './runtime-variables.js';
 
 export const EXTENSION_ID = 'kubohiroyaruntimeexpression';
-export const EXTENSION_VERSION = '2026-08-03-condition-syntax-v1';
+export const EXTENSION_VERSION = '0.5.0';
 export const DOCS_URI =
   'https://kubohiroya.github.io/turbowarp-runtime-expression/';
 export const BLOCK_ICON_URI = `data:image/svg+xml,${encodeURIComponent(

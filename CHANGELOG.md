@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.0 — 2026-08-25
+
+- Standardize package metadata, Pages homepage, Node 22, and pnpm maintainer commands.
+- Add repository policy checks for versioned README/CDN/release-note consistency and package archive contents.
+- Keep expression syntax, watcher lifecycle, extension ID, opcodes, and public Composition API unchanged.
+- Roll back by pinning `@kubohiroya/turbowarp-runtime-expression@0.4.0`.
+
 ## 0.4.0 — 2026-08-14
 
 - Add a self-contained SVG block icon for identifying Runtime Expression blocks in TurboWarp.

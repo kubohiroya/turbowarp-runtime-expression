@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "productName": "TurboWarp Runtime Expression",
+  "packageType": "extension-composition",
+  "licensePolicy": "mpl-2.0",
+  "packageManager": "pnpm",
+  "homepage": "pages",
+  "node": {
+    "minimum": "22"
+  },
+  "extension": {
+    "id": "kubohiroyaruntimeexpression",
+    "standaloneBundle": "dist/runtime-expression.js",
+    "compositionBundle": "dist/composition.js",
+    "compositionTypes": "dist/types/composition.d.ts"
+  },
+  "exceptions": {
+    "compositionApi": true,
+    "expressionSemantics": true,
+    "legacyOpcodeCompatibility": true
+  }
+}
