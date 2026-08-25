@@ -37,7 +37,7 @@ You need:
 2. Add the following URL as a custom extension:
 
    ```text
-   https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.4.0/dist/runtime-expression.js
+   https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.5.0/dist/runtime-expression.js
    ```
 
 3. Enable **Run extension without sandbox** when TurboWarp asks.
@@ -53,7 +53,7 @@ The block now reports `true`. If `state` is missing or contains another value, i
 To install the reviewed build from npm instead:
 
 ```bash
-npm install --save-exact @kubohiroya/turbowarp-runtime-expression@0.4.0
+pnpm add --save-exact @kubohiroya/turbowarp-runtime-expression@0.5.0
 ```
 
 Then load `node_modules/@kubohiroya/turbowarp-runtime-expression/dist/runtime-expression.js`.
@@ -199,8 +199,9 @@ The `runtimeExpression` and `conditionalBroadcast` compile-time feature flags li
 ## Development
 
 ```bash
-npm install
-npm run check
+corepack enable
+pnpm install --frozen-lockfile
+pnpm run check
 ```
 
 The build produces `dist/runtime-expression.js`, `dist/composition.js`, and declarations in `dist/types/`. Commit the rebuilt files whenever source changes. The block reference above is generated from `src/block-definitions.json`; keep the marker comments intact.
@@ -220,4 +221,4 @@ for versioning, npm publication, verification, and rollback.
 
 ## License
 
-MPL-2.0
+SPDX-License-Identifier: MPL-2.0
