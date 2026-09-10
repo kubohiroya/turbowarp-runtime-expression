@@ -1,6 +1,6 @@
 {
   "name": "@kubohiroya/turbowarp-runtime-expression",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A safe condition evaluator and conditional broadcast monitor for TurboWarp runtime variables.",
   "author": "Hiroya Kubo <hiroya@cuc.ac.jp>",
   "type": "module",
@@ -36,7 +36,7 @@
   },
   "packageManager": "pnpm@11.11.0",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.18.0"
   },
   "scripts": {
     "dev": "vite build --watch",
@@ -47,19 +47,20 @@
     "build:types": "tsc --project tsconfig.build.json",
     "types:composition:check": "tsc --project tsconfig.composition-consumer.json",
     "test": "vitest run",
-    "docs": "node scripts/generate-readme.mjs",
-    "docs:check": "node scripts/generate-readme.mjs --check",
+    "docs": "node scripts/generate-readme.ts",
+    "docs:check": "node scripts/generate-readme.ts --check",
     "check:dist": "pnpm run build && git diff --exit-code -- dist",
-    "repo:check": "node scripts/check-repo.mjs",
+    "repo:check": "node scripts/check-repo.ts",
     "pack:check": "npm pack --dry-run --ignore-scripts",
     "release:check": "npm publish --dry-run --access public",
     "check": "pnpm run typecheck && pnpm run test && pnpm run build && pnpm run types:composition:check && pnpm run docs:check && pnpm run check:dist && pnpm run repo:check && pnpm run pack:check",
     "prepack": "pnpm run build"
   },
   "devDependencies": {
-    "@kubohiroya/vite-plugin-turbowarp-extension": "0.1.1",
+    "@kubohiroya/vite-plugin-turbowarp-extension": "0.4.0",
+    "@types/node": "^22.20.1",
     "typescript": "^5.9.3",
-    "vite": "^7.3.6",
+    "vite": "^8.2.2",
     "vitest": "^4.1.10"
   },
   "keywords": [
