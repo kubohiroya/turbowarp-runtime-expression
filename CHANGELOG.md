@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0 — 2026-09-10
+
+- Migrate the repository scripts from `.mjs` to TypeScript and run them with Node's native type stripping.
+- Raise `engines.node` to `>=22.18.0`, the first release that runs TypeScript sources without a flag.
+- Move the build to Vite 8 and `vite-plugin-turbowarp-extension` 0.3.0; the tracked extension bundle is regenerated.
+- Keep expression syntax, watcher lifecycle, extension ID, opcodes, and public Composition API unchanged.
+- Roll back by pinning `@kubohiroya/turbowarp-runtime-expression@0.5.0`.
+
 ## 0.5.0 — 2026-08-25
 
 - Standardize package metadata, Pages homepage, Node 22, and pnpm maintainer commands.
