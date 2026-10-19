@@ -472,5 +472,7 @@ expressions.releaseAll();</code></pre>
         </div>
       </div>
     </footer>
-  </body>
+
+<section id="fixed-input-editing"><h2>Fixed input editing</h2><p>With a compatible TurboWarp GUI, enable fixed-input forms to edit only standard literal fields. Numbers use complete finite JSON number tokens; menu fields use existing choices. Connected reporters and unavailable fields stay read-only and are never evaluated. Saving an unchanged form preserves exact existing raw values, including legacy spellings and unknown choices. Invalid drafts stay in the same editing session; cancel, project/target replacement, or block removal discards them. Disabling the GUI feature flag restores native field editing. This form does not run blocks, open network/audio/key/QR sessions, resolve names, or edit Schema arguments. Nonpositive timeout values retain the no-deadline sentinel.</p><ul><li><a href="#block-registerConditionalBroadcast"><code>registerConditionalBroadcast</code></a>: TIMEOUT</li></ul><article id="block-registerConditionalBroadcast"><h3><code>register [ID] conditional broadcast [CONDITION] [MESSAGE_ON_TRUE] / [MESSAGE_ON_FALSE] with [TIMEOUT] seconds timeout</code></h3><p>Registers broadcasts for false-to-true and true-to-false runtime condition changes.</p><p class="fixed-input-help-link">Fixed literal fields: <code>TIMEOUT</code>. <a href="#fixed-input-editing">Editing UI and preservation rules</a>.</p></article></section>
+</body>
 </html>
