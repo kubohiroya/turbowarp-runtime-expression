@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1 - 2026-10-19
+
+- Publish the selected Git source with explicit base revision metadata and exact latest internal npm dependencies.
+- Preserve public APIs and block data contracts; prior release history is retained below.
+
+
 ## 0.6.0 — 2026-09-10
 
 - Migrate the repository scripts from `.mjs` to TypeScript and run them with Node's native type stripping.
