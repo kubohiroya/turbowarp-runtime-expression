@@ -1,3 +1,4 @@
+import {registerFixedInputEditors} from './fixed-input-editors.js';
 import definitions from './block-definitions.json' with {type: 'json'};
 import {FEATURE_FLAGS} from '../config/feature-flags.js';
 import {ConditionalBroadcastManager} from './conditional-broadcast.js';
@@ -8,7 +9,7 @@ import {
 import {readRuntimeVariable, requireRuntimeVariables} from './runtime-variables.js';
 
 export const EXTENSION_ID = 'kubohiroyaruntimeexpression';
-export const EXTENSION_VERSION = '0.5.0';
+export const EXTENSION_VERSION = '0.6.1';
 export const DOCS_URI =
   'https://kubohiroya.github.io/turbowarp-runtime-expression/';
 export const BLOCK_ICON_URI = `data:image/svg+xml,${encodeURIComponent(
@@ -35,6 +36,8 @@ interface DefinitionBlock {
 const blockDefinitions = definitions.blocks as DefinitionBlock[];
 
 export class RuntimeExpressionExtension {
+  private fixedEditorsDispose: (() => void) | undefined;
+
   private readonly runtime = Scratch.vm.runtime;
   private readonly evaluator = new ConditionEvaluator();
   private readonly conditionalBroadcasts =
@@ -52,7 +55,7 @@ export class RuntimeExpressionExtension {
   }
 
   getInfo(): ScratchExtensionInfo {
-    return {
+    const info = {
       id: EXTENSION_ID,
       name: Scratch.translate(definitions.extensionName),
       docsURI: DOCS_URI,
@@ -78,6 +81,8 @@ export class RuntimeExpressionExtension {
           )
         }))
     };
+    this.fixedEditorsDispose ??= registerFixedInputEditors(Scratch, this.runtime, info.blocks);
+    return info;
   }
 
   runtimeCondition(args: BlockArgs): boolean {

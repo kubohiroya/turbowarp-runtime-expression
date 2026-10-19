@@ -37,7 +37,7 @@ You need:
 2. Add the following URL as a custom extension:
 
    ```text
-   https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.5.0/dist/runtime-expression.js
+   https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.6.1/dist/runtime-expression.js
    ```
 
 3. Enable **Run extension without sandbox** when TurboWarp asks.
@@ -53,7 +53,7 @@ The block now reports `true`. If `state` is missing or contains another value, i
 To install the reviewed build from npm instead:
 
 ```bash
-pnpm add --save-exact @kubohiroya/turbowarp-runtime-expression@0.5.0
+pnpm add --save-exact @kubohiroya/turbowarp-runtime-expression@0.6.1
 ```
 
 Then load `node_modules/@kubohiroya/turbowarp-runtime-expression/dist/runtime-expression.js`.
@@ -222,3 +222,11 @@ for versioning, npm publication, verification, and rollback.
 ## License
 
 SPDX-License-Identifier: MPL-2.0
+
+## Fixed input editing
+
+With a compatible TurboWarp GUI, enable fixed-input forms to edit only standard literal fields. Numbers use complete finite JSON number tokens; menu fields use existing choices. Connected reporters and unavailable fields stay read-only and are never evaluated. Saving an unchanged form preserves exact existing raw values, including legacy spellings and unknown choices. Invalid drafts stay in the same editing session; cancel, project/target replacement, or block removal discards them. Disabling the GUI feature flag restores native field editing. This form does not run blocks, open network/audio/key/QR sessions, resolve names, or edit Schema arguments. Nonpositive timeout values retain the no-deadline sentinel.
+
+Canonical contracts: `schemas/block-editor-fixed-inputs.schema.json`; codecs and optional registration: `src/fixed-input-editors.ts`. These contracts describe new fixed-field candidates; they do not redefine all runtime data. The GUI integration is optional and existing standalone/composition APIs stay available.
+
+- `registerConditionalBroadcast`: TIMEOUT — [block documentation](https://kubohiroya.github.io/turbowarp-runtime-expression/#block-registerConditionalBroadcast).
