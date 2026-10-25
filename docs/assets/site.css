@@ -845,3 +845,13 @@ tr:last-child td {
     transition-duration: 0.01ms !important;
   }
 }
+
+:root{color-scheme:light dark}
+@media (prefers-color-scheme:light){
+  :root{
+    --ink:#17132a;--muted:#5a5370;--quiet:#7b7490;
+    --canvas:#faf9ff;--panel:#ffffff;--panel-raised:#f3f1fb;--line:#e0dcee;
+    --violet:#6f5bd3;--violet-deep:#4a38a8;
+    --mint:#1d9a6c;--amber:#b87b14;--rose:#c4546d;--code:#f2f0fa;
+  }
+}
