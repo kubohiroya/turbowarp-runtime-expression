@@ -2,7 +2,7 @@
   "id": "kubohiroyaruntimeexpression",
   "name": "Runtime Expression",
   "docsURI": "https://kubohiroya.github.io/turbowarp-runtime-expression/",
-  "blockIconURI": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M7%2032h13l12-12%2012%2012-12%2012-12-12M44%2032l11-11M44%2032l11%2011%22%2F%3E%3Ccircle%20cx%3D%2256%22%20cy%3D%2220%22%20r%3D%222%22%20fill%3D%22%23fff%22%2F%3E%3Ccircle%20cx%3D%2256%22%20cy%3D%2244%22%20r%3D%222%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E",
+  "blockIconURI": "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Cpath%20d%3D%22M6%2036h13V14h23%22%20fill%3D%22none%22%20stroke%3D%22%23E6533C%22%20stroke-width%3D%224.4%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%2219%22%20cy%3D%2225%22%20r%3D%225%22%20fill%3D%22%23FFAB19%22%2F%3E%3C%2Fsvg%3E",
   "color1": "#6f5bd3",
   "color2": "#5845b8",
   "color3": "#40328e",

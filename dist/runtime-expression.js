@@ -797,7 +797,7 @@
   //#region src/extension.ts
   var EXTENSION_ID = "kubohiroyaruntimeexpression";
   var DOCS_URI = "https://kubohiroya.github.io/turbowarp-runtime-expression/";
-  var BLOCK_ICON_URI = `data:image/svg+xml,${encodeURIComponent("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\"><g fill=\"none\" stroke=\"#fff\" stroke-width=\"5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M7 32h13l12-12 12 12-12 12-12-12M44 32l11-11M44 32l11 11\"/><circle cx=\"56\" cy=\"20\" r=\"2\" fill=\"#fff\"/><circle cx=\"56\" cy=\"44\" r=\"2\" fill=\"#fff\"/></g></svg>")}`;
+  var BLOCK_ICON_URI = `data:image/svg+xml,${encodeURIComponent("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 48 48\"><path d=\"M6 36h13V14h23\" fill=\"none\" stroke=\"#E6533C\" stroke-width=\"4.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"19\" cy=\"25\" r=\"5\" fill=\"#FFAB19\"/></svg>")}`;
   var blockDefinitions = block_definitions_default.blocks;
   var RuntimeExpressionExtension = class {
   	constructor() {
