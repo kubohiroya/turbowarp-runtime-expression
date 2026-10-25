@@ -9,10 +9,10 @@ importers:
   .:
     devDependencies:
       '@kubohiroya/turbowarp-extension-data-editor':
-        specifier: 0.2.1
+        specifier: "^0.2.1"
         version: 0.2.1(react@18.3.1)
       '@kubohiroya/vite-plugin-turbowarp-extension':
-        specifier: 0.6.1
+        specifier: "^0.6.1"
         version: 0.6.1(vite@8.2.2(@types/node@22.20.1)(esbuild@0.28.2)(yaml@2.9.1))
       '@types/node':
         specifier: ^22.20.1
