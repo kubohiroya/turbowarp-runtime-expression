@@ -101,8 +101,8 @@ describe('Runtime Expression extension', () => {
     );
     expect(info.blockIconURI).toBe(BLOCK_ICON_URI);
     const iconSvg = decodeURIComponent(BLOCK_ICON_URI.slice('data:image/svg+xml,'.length));
-    expect(iconSvg).toContain('viewBox="0 0 64 64"');
-    expect(iconSvg).toContain('M7 32h13l12-12 12 12');
+    expect(iconSvg).toContain('viewBox="0 0 48 48"');
+    expect(iconSvg).toContain('M6 36h13V14h23');
     expect(iconSvg).not.toContain('<rect');
   });
 
