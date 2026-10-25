@@ -10,7 +10,7 @@ import {
 import {readRuntimeVariable, requireRuntimeVariables} from './runtime-variables.js';
 
 export const EXTENSION_ID = extensionConfig.id;
-export const EXTENSION_VERSION = '0.6.1';
+export const EXTENSION_VERSION = '0.7.0';
 export const DOCS_URI = extensionConfig.docsURI;
 export const BLOCK_ICON_URI = extensionConfig.blockIconURI;
 

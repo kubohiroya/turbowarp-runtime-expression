@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.0 - 2026-10-26
+
+- ビルド依存をplugin 0.8.0 / data-editor 0.3.4へ更新。
+- 既存の式構文・公開API・フラグの既定値を維持。切り戻しは `@kubohiroya/turbowarp-runtime-expression@0.6.1` へ固定（前minor系列: `@kubohiroya/turbowarp-runtime-expression@0.6.0`）。
+
 ## 0.6.1 - 2026-10-19
 
 - Publish the selected Git source with explicit base revision metadata and exact latest internal npm dependencies.
