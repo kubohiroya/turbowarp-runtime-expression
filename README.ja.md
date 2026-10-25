@@ -2,7 +2,7 @@
 
 <img src="assets/block-icon.svg" alt="" width="48" height="48">
 
-[English](README.md)
+[English](README.md) | 日本語
 
 [Temporary Variables](https://extensions.turbowarp.org/)を安全なBoolean条件に変え、条件が`false`と
 `true`の間で変化したときだけブロードキャストします。

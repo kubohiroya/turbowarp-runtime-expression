@@ -2,7 +2,7 @@
 
 <img src="assets/block-icon.svg" alt="" width="48" height="48">
 
-[日本語](README.ja.md)
+English | [日本語](README.ja.md)
 
 Turn [Temporary Variables](https://extensions.turbowarp.org/) into safe Boolean conditions, then broadcast only when a condition changes between `false` and `true`.
 
