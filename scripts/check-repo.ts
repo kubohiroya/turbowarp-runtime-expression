@@ -60,6 +60,7 @@ const readme = await readFile('README.md', 'utf8');
 const changelog = await readFile('CHANGELOG.md', 'utf8');
 const license = await readFile('LICENSE', 'utf8');
 const source = await readFile('src/extension.ts', 'utf8');
+const extensionConfigSource = await readFile('src/config.ts', 'utf8');
 const bundle = await readFile(policy.extension.standaloneBundle, 'utf8');
 const compositionBundle = await readFile(policy.extension.compositionBundle, 'utf8');
 const compositionTypes = await readFile(policy.extension.compositionTypes, 'utf8');
@@ -152,8 +153,9 @@ function checkLicense() {
 }
 
 function checkRuntimeContract() {
-  if (!source.includes("EXTENSION_ID = 'kubohiroyaruntimeexpression'")) {
-    errors.push('src/extension.ts must retain Runtime Expression extension ID');
+  // src/config.ts is the one source for this metadata; src/extension.ts reads it.
+  if (!extensionConfigSource.includes("id: 'kubohiroyaruntimeexpression'")) {
+    errors.push('src/config.ts must retain Runtime Expression extension ID');
   }
   if (!source.includes(`EXTENSION_VERSION = '${packageMetadata.version}'`)) {
     errors.push('src/extension.ts EXTENSION_VERSION must match package version');

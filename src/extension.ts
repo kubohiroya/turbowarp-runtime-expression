@@ -1,3 +1,4 @@
+import {extensionConfig} from './config.js';
 import {registerFixedInputEditors} from './fixed-input-editors.js';
 import definitions from './block-definitions.json' with {type: 'json'};
 import {FEATURE_FLAGS} from '../config/feature-flags.js';
@@ -8,13 +9,10 @@ import {
 } from './condition.js';
 import {readRuntimeVariable, requireRuntimeVariables} from './runtime-variables.js';
 
-export const EXTENSION_ID = 'kubohiroyaruntimeexpression';
+export const EXTENSION_ID = extensionConfig.id;
 export const EXTENSION_VERSION = '0.6.1';
-export const DOCS_URI =
-  'https://kubohiroya.github.io/turbowarp-runtime-expression/';
-export const BLOCK_ICON_URI = `data:image/svg+xml,${encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M6 36h13V14h23" fill="none" stroke="#E6533C" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="19" cy="25" r="5" fill="#FFAB19"/></svg>'
-)}`;
+export const DOCS_URI = extensionConfig.docsURI;
+export const BLOCK_ICON_URI = extensionConfig.blockIconURI;
 
 type BlockArgs = Record<string, unknown>;
 
@@ -60,9 +58,9 @@ export class RuntimeExpressionExtension {
       name: Scratch.translate(definitions.extensionName),
       docsURI: DOCS_URI,
       blockIconURI: BLOCK_ICON_URI,
-      color1: '#6f5bd3',
-      color2: '#5845b8',
-      color3: '#40328e',
+      color1: extensionConfig.color1,
+      color2: extensionConfig.color2,
+      color3: extensionConfig.color3,
       blocks: blockDefinitions
         .filter((block) => !block.featureFlag || FEATURE_FLAGS[block.featureFlag])
         .map((block) => ({

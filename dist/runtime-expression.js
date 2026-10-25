@@ -7,6 +7,21 @@
 (function (Scratch) {
   'use strict';
 
+  //#region src/config.ts
+  var extensionConfig = {
+  	id: "kubohiroyaruntimeexpression",
+  	slug: "runtime-expression",
+  	name: "Runtime Expression",
+  	description: "Safely evaluate JavaScript-like conditions over Temporary Variables runtime variables.",
+  	author: "Hiroya Kubo",
+  	license: "MPL-2.0",
+  	unsandboxed: true,
+  	docsURI: "https://kubohiroya.github.io/turbowarp-runtime-expression/",
+  	color1: "#6f5bd3",
+  	color2: "#5845b8",
+  	color3: "#40328e",
+  	blockIconURI: `data:image/svg+xml,${encodeURIComponent("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 48 48\"><path d=\"M6 36h13V14h23\" fill=\"none\" stroke=\"#E6533C\" stroke-width=\"4.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"19\" cy=\"25\" r=\"5\" fill=\"#FFAB19\"/></svg>")}`
+  };
   var block_editor_fixed_inputs_schema_default = {
   	$schema: "http://json-schema.org/draft-07/schema#",
   	$id: "https://kubohiroya.github.io/turbowarp-runtime-expression/schemas/block-editor-fixed-inputs.schema.json",
@@ -795,9 +810,9 @@
   }
   //#endregion
   //#region src/extension.ts
-  var EXTENSION_ID = "kubohiroyaruntimeexpression";
-  var DOCS_URI = "https://kubohiroya.github.io/turbowarp-runtime-expression/";
-  var BLOCK_ICON_URI = `data:image/svg+xml,${encodeURIComponent("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 48 48\"><path d=\"M6 36h13V14h23\" fill=\"none\" stroke=\"#E6533C\" stroke-width=\"4.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"19\" cy=\"25\" r=\"5\" fill=\"#FFAB19\"/></svg>")}`;
+  var EXTENSION_ID = extensionConfig.id;
+  var DOCS_URI = extensionConfig.docsURI;
+  var BLOCK_ICON_URI = extensionConfig.blockIconURI;
   var blockDefinitions = block_definitions_default.blocks;
   var RuntimeExpressionExtension = class {
   	constructor() {
@@ -816,9 +831,9 @@
   			name: Scratch.translate(block_definitions_default.extensionName),
   			docsURI: DOCS_URI,
   			blockIconURI: BLOCK_ICON_URI,
-  			color1: "#6f5bd3",
-  			color2: "#5845b8",
-  			color3: "#40328e",
+  			color1: extensionConfig.color1,
+  			color2: extensionConfig.color2,
+  			color3: extensionConfig.color3,
   			blocks: blockDefinitions.filter((block) => !block.featureFlag || FEATURE_FLAGS[block.featureFlag]).map((block) => ({
   				opcode: block.opcode,
   				blockType: Scratch.BlockType[block.blockType],
@@ -855,7 +870,7 @@
   };
   //#endregion
   //#region src/index.ts
-  if (!Scratch.extensions.unsandboxed) throw new Error("Runtime Expression must run unsandboxed.");
+  if (extensionConfig.unsandboxed && !Scratch.extensions.unsandboxed) throw new Error(`${extensionConfig.name} must run unsandboxed.`);
   Scratch.extensions.register(new RuntimeExpressionExtension());
   //#endregion
 
