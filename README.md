@@ -1,5 +1,7 @@
 # TurboWarp-Runtime-Expression
 
+[日本語](README.ja.md)
+
 Turn [Temporary Variables](https://extensions.turbowarp.org/) into safe Boolean conditions, then broadcast only when a condition changes between `false` and `true`.
 
 **Full user guide:** [English](https://kubohiroya.github.io/turbowarp-runtime-expression/) · [日本語](https://kubohiroya.github.io/turbowarp-runtime-expression/ja/)
