@@ -203,6 +203,7 @@ The `runtimeExpression` and `conditionalBroadcast` compile-time feature flags li
 ## Development
 
 ```bash
+npm install --global corepack@latest
 corepack enable
 pnpm install --frozen-lockfile
 pnpm run check
