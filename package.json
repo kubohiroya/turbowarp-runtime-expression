@@ -1,6 +1,6 @@
 {
   "name": "@kubohiroya/turbowarp-runtime-expression",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "A safe condition evaluator and conditional broadcast monitor for TurboWarp runtime variables.",
   "author": "Hiroya Kubo <hiroya@cuc.ac.jp>",
   "type": "module",
@@ -59,12 +59,12 @@
     "prepack": "pnpm run build"
   },
   "devDependencies": {
-    "@kubohiroya/vite-plugin-turbowarp-extension": "^0.8.0",
+    "@kubohiroya/vite-plugin-turbowarp-extension": "^0.9.0",
     "@types/node": "^22.20.1",
     "typescript": "^5.9.3",
     "vite": "^8.2.2",
     "vitest": "^4.1.10",
-    "@kubohiroya/turbowarp-extension-data-editor": "^0.3.4"
+    "@kubohiroya/turbowarp-extension-data-editor": "^0.4.0"
   },
   "keywords": [
     "turbowarp",
@@ -73,10 +73,10 @@
     "expression",
     "runtime-variables"
   ],
-  "gitHead": "ec035c9ba2803c3259f98925135637cea3259239",
+  "gitHead": "4c1a6c12050e4e3cf09f906d58747dcdf869775e",
   "x-turbowarp-source": {
-    "revision": "ec035c9ba2803c3259f98925135637cea3259239",
+    "revision": "4c1a6c12050e4e3cf09f906d58747dcdf869775e",
     "revisionRole": "base-commit",
-    "sourceState": "working-tree-release-overlay"
+    "sourceState": "local-release-overlay"
   }
 }
