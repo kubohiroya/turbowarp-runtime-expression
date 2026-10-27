@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.0 - 2026-10-27
+
+- ビルド依存をplugin 0.9.0 / data-editor 0.4.0へ更新。
+- ロールバック: @kubohiroya/turbowarp-runtime-expression@0.7.0 を固定して利用する。
+
 ## 0.7.0 - 2026-10-26
 
 - ビルド依存をplugin 0.8.0 / data-editor 0.3.4へ更新。
