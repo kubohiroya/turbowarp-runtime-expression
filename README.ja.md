@@ -9,6 +9,17 @@
 
 **詳しいユーザーガイド:** [English](https://kubohiroya.github.io/turbowarp-runtime-expression/) · [日本語](https://kubohiroya.github.io/turbowarp-runtime-expression/ja/)
 
+## 実行できるサンプル
+
+[**TurboWarp Editorでデモを開く**](https://turbowarp.org/editor?project_url=https%3A%2F%2Fkubohiroya.github.io%2Fturbowarp-runtime-expression%2Fsamples%2Fcondition-score-gate.sb3) · [SB3をダウンロード](https://kubohiroya.github.io/turbowarp-runtime-expression/samples/condition-score-gate.sb3)
+
+**Run without sandbox**を選んで**Allow**し、緑の旗を押します。
+点数を変え、`validateConditionSyntax`と`runtimeCondition`による合格判定を表示。サンプルの元データと期待結果は[`samples/README.md`](samples/README.md)に記載しています。
+
+実行時変数の評価に必要な公式**Temporary Variables**拡張もプロジェクトから読み込みます。インターネット接続が必要です。
+
+`pnpm run samples:build`でSB3を再生成し、`pnpm run samples:check`で更新漏れと生成処理を確認します。
+
 ## できること
 
 Runtime Expressionは、TurboWarpのプロジェクトで実行時の状態を使う方法を2つ追加します。

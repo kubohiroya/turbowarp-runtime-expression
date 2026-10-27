@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 480 360">
+<rect width="480" height="360" fill="#f1f5f9"/><g font-family="sans-serif" fill="#172b4d">
+<text x="18" y="34" font-size="22" font-weight="bold">Runtime Expression: minimal demo</text>
+<text x="18" y="65" font-size="14">Allow the extension, then click the green flag.</text>
+<text x="18" y="90" font-size="14">Inspect the code and run again to try your own input.</text>
+<text x="18" y="321" font-size="12">The score condition is false at 9 and true at 10.</text>
+<text x="18" y="345" font-size="12">No account, API key, camera, or external device required.</text>
+</g></svg>

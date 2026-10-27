@@ -8,6 +8,18 @@ Turn [Temporary Variables](https://extensions.turbowarp.org/) into safe Boolean 
 
 **Full user guide:** [English](https://kubohiroya.github.io/turbowarp-runtime-expression/) · [日本語](https://kubohiroya.github.io/turbowarp-runtime-expression/ja/)
 
+## Runnable sample
+
+[**Open the demo in TurboWarp Editor**](https://turbowarp.org/editor?project_url=https%3A%2F%2Fkubohiroya.github.io%2Fturbowarp-runtime-expression%2Fsamples%2Fcondition-score-gate.sb3) · [Download the SB3](https://kubohiroya.github.io/turbowarp-runtime-expression/samples/condition-score-gate.sb3)
+
+Select **Run without sandbox**, then **Allow**, and click the green flag.
+The score condition is false at 9 and true at 10.
+
+The project also loads the official **Temporary Variables** extension from the TurboWarp gallery. It is required for runtime variable evaluation; an internet connection is needed.
+
+Editable sources and expected results: [`samples/README.md`](samples/README.md).
+Run `pnpm run samples:build` after source/bundle changes and `pnpm run samples:check` before committing.
+
 ## What it does
 
 Runtime Expression adds two ways to use runtime state in a TurboWarp project:
