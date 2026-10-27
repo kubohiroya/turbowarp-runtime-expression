@@ -55,7 +55,7 @@ Temporary Variables  →  restricted expression parser  →  current result
 2. 次のURLをカスタム拡張機能として追加します。
 
    ```text
-   https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.8.0/dist/runtime-expression.js
+   https://cdn.jsdelivr.net/npm/@kubohiroya/turbowarp-runtime-expression@0.8.1/dist/runtime-expression.js
    ```
 
 3. TurboWarpが確認したら**サンドボックス化せずに実行**を有効にします。
@@ -71,7 +71,7 @@ Temporary Variables  →  restricted expression parser  →  current result
 レビュー済みのビルドをnpmから導入する場合は次を使います。
 
 ```bash
-pnpm add --save-exact @kubohiroya/turbowarp-runtime-expression@0.8.0
+pnpm add --save-exact @kubohiroya/turbowarp-runtime-expression@0.8.1
 ```
 
 その後`node_modules/@kubohiroya/turbowarp-runtime-expression/dist/runtime-expression.js`を読み込みます。
