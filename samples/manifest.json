@@ -1,0 +1,35 @@
+{
+  "baseURL": "https://kubohiroya.github.io/turbowarp-runtime-expression/",
+  "extension": {
+    "id": "kubohiroyaruntimeexpression",
+    "bundle": "dist/runtime-expression.js",
+    "unsandboxed": true,
+    "dependencies": [
+      {
+        "id": "lmsTempVars2",
+        "url": "https://extensions.turbowarp.org/Lily/TempVariables2.js"
+      }
+    ]
+  },
+  "samples": [
+    {
+      "name": "condition-score-gate",
+      "title": "Runtime Expression minimal demo",
+      "checks": [
+        {
+          "variable": "syntax",
+          "contains": "true"
+        },
+        {
+          "variable": "below",
+          "equals": false
+        },
+        {
+          "variable": "passes",
+          "equals": true
+        }
+      ],
+      "instructions": "The score condition is false at 9 and true at 10."
+    }
+  ]
+}
