@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.0 - 2026-10-29
+
+- 製作者情報を name: `Hiroya Kubo`、email: `hiroya@cuc.ac.jp`、url: `https://github.com/kubohiroya` のオブジェクトへ統一。
+- ビルド依存 `@kubohiroya/vite-plugin-turbowarp-extension` を `^0.9.0` から `^0.10.0` へ更新。
+- ビルド依存 `@kubohiroya/turbowarp-extension-data-editor` を `^0.4.0` から `^0.5.0` へ更新。
+- ロールバック: `@kubohiroya/turbowarp-runtime-expression@0.8.1` を固定して利用する。前minor系列の基準は `@kubohiroya/turbowarp-runtime-expression@0.8.0`。
+
 ## 0.8.1 - 2026-10-28
 
 - Pagesで動作するsamplesデモを追加しました。npm公開物のAPI・拡張ID・既定値は変わりません。

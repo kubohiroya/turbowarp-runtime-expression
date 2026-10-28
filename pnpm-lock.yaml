@@ -9,11 +9,11 @@ importers:
   .:
     devDependencies:
       '@kubohiroya/turbowarp-extension-data-editor':
-        specifier: ^0.4.0
-        version: 0.4.0(react@18.3.1)
+        specifier: ^0.5.0
+        version: 0.5.0(react@18.3.1)
       '@kubohiroya/vite-plugin-turbowarp-extension':
-        specifier: ^0.9.0
-        version: 0.9.0(vite@8.2.2(@types/node@22.20.1)(esbuild@0.28.2)(yaml@2.9.1))
+        specifier: ^0.10.0
+        version: 0.10.0(vite@8.2.2(@types/node@22.20.1)(esbuild@0.28.2)(yaml@2.9.1))
       '@types/node':
         specifier: ^22.20.1
         version: 22.20.1
@@ -188,8 +188,8 @@ packages:
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
 
-  '@kubohiroya/turbowarp-extension-data-editor@0.4.0':
-    resolution: {integrity: sha512-AijNYwf8LG+i0NLx48wYsKpObWRZ347BEtrsLv4PNIc20UItC4hs4yTwnGNd+ffGHIrSqcWUjt3ZJysFt/KzsQ==}
+  '@kubohiroya/turbowarp-extension-data-editor@0.5.0':
+    resolution: {integrity: sha512-MltTv+sDgmWXS9RDl8Ea1oPpISycTPq4h3hevZ6aVBkuFQB/2JiRekYK2CkIazj+L6w3egLV6HekDmP4vtVaUQ==}
     engines: {node: '>=24'}
     peerDependencies:
       react: ^16.14.0 || ^17 || ^18
@@ -200,8 +200,8 @@ packages:
       react-dom:
         optional: true
 
-  '@kubohiroya/vite-plugin-turbowarp-extension@0.9.0':
-    resolution: {integrity: sha512-RU1+s/xJ02rsuEdMvYMEcxiPpTF7eyiTFlodmF780rzC91cAiESPf4HiFqQCJix6zd+eNbu3SulI2piQK6C1Zw==}
+  '@kubohiroya/vite-plugin-turbowarp-extension@0.10.0':
+    resolution: {integrity: sha512-N/c1gsmOS9dozskUzmSLRwqVZzOLDGs44cOPBv2VdITR2v//TFQKlNw3jhBLVeyMfdlfAICwrpvC74xFgZxrNA==}
     engines: {node: '>=24'}
     peerDependencies:
       vite: '>=8.0.0'
@@ -835,7 +835,7 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
-  '@kubohiroya/turbowarp-extension-data-editor@0.4.0(react@18.3.1)':
+  '@kubohiroya/turbowarp-extension-data-editor@0.5.0(react@18.3.1)':
     dependencies:
       '@rjsf/core': 5.24.13(@rjsf/utils@5.24.13(react@18.3.1))(react@18.3.1)
       '@rjsf/utils': 5.24.13(react@18.3.1)
@@ -847,7 +847,7 @@ snapshots:
     optionalDependencies:
       react: 18.3.1
 
-  '@kubohiroya/vite-plugin-turbowarp-extension@0.9.0(vite@8.2.2(@types/node@22.20.1)(esbuild@0.28.2)(yaml@2.9.1))':
+  '@kubohiroya/vite-plugin-turbowarp-extension@0.10.0(vite@8.2.2(@types/node@22.20.1)(esbuild@0.28.2)(yaml@2.9.1))':
     dependencies:
       acorn: 8.18.0
       vite: 8.2.2(@types/node@22.20.1)(esbuild@0.28.2)(yaml@2.9.1)
