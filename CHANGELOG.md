@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.0 - 2026-11-07
+
+- ビルド依存を vite-plugin 0.11.0 と data-editor 0.8.1 に更新。
+- ロールバックは `@kubohiroya/turbowarp-runtime-expression@0.9.0` への固定。
+
 ## 0.9.0 - 2026-10-29
 
 - 製作者情報を name: `Hiroya Kubo`、email: `hiroya@cuc.ac.jp`、url: `https://github.com/kubohiroya` のオブジェクトへ統一。
