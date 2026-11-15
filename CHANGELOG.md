@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.1 - 2026-11-15
+
+- 別の作品を開いたあとも、ブロックの編集ダイアログを開けるように修正。
+- ロールバックは `@kubohiroya/turbowarp-runtime-expression@0.10.0` への固定。
+
 ## 0.10.0 - 2026-11-07
 
 - ビルド依存を vite-plugin 0.11.0 と data-editor 0.8.1 に更新。
