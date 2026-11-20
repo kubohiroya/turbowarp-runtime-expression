@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.1 - 2026-11-21
+
+- パッケージにリソース利用宣言を追加。切り戻しは `@kubohiroya/turbowarp-runtime-expression@0.11.0` に固定。
+
 ## 0.11.0 - 2026-11-20
 
 - family依存を更新。切戻しは @kubohiroya/turbowarp-runtime-expression@0.10.0 を利用。
