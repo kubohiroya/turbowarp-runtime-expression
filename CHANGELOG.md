@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.0 - 2026-11-20
+
+- family依存を更新。切戻しは @kubohiroya/turbowarp-runtime-expression@0.10.0 を利用。
+
 ## 0.10.1 - 2026-11-15
 
 - 別の作品を開いたあとも、ブロックの編集ダイアログを開けるように修正。
