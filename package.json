@@ -1,6 +1,6 @@
 {
   "name": "@kubohiroya/turbowarp-runtime-expression",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "description": "A safe condition evaluator and conditional broadcast monitor for TurboWarp runtime variables.",
   "author": {
     "name": "Hiroya Kubo",
@@ -71,7 +71,7 @@
     "typescript": "^5.9.3",
     "vite": "^8.2.2",
     "vitest": "^4.1.10",
-    "@kubohiroya/turbowarp-extension-data-editor": "^0.8.1"
+    "@kubohiroya/turbowarp-extension-data-editor": "^0.11.0"
   },
   "keywords": [
     "turbowarp",
