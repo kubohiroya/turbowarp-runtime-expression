@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.1 - 2026-11-24
+
+- family依存を更新（`turbowarp-extension-data-editor` ^0.11.4）。切り戻しは `@kubohiroya/turbowarp-runtime-expression@0.11.0` に固定。
+
 ## 0.12.0 - 2026-11-22
 
 - family依存を更新（`turbowarp-extension-data-editor` ^0.11.2）。切り戻しは `@kubohiroya/turbowarp-runtime-expression@0.11.0` に固定。
